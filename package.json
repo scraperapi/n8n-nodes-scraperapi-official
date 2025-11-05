@@ -1,19 +1,21 @@
 {
-	"name": "n8n-nodes-<...>",
+	"name": "n8n-nodes-scraperapi",
 	"version": "0.1.0",
-	"description": "",
+	"description": "Official ScraperAPI nodes for n8n",
 	"license": "MIT",
-	"homepage": "",
+	"homepage": "https://www.scraperapi.com",
 	"keywords": [
-		"n8n-community-node-package"
+		"n8n-community-node-package",
+		"scraperapi",
+		"n8n"
 	],
 	"author": {
-		"name": "",
-		"email": ""
+		"name": "ScraperAPI",
+		"email": "support@scraperapi.com"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/<...>/n8n-nodes-<...>.git"
+		"url": "https://github.com/scraperapi/n8n-nodes-scraperapi.git"
 	},
 	"scripts": {
 		"build": "n8n-node build",
@@ -31,12 +33,10 @@
 		"n8nNodesApiVersion": 1,
 		"strict": true,
 		"credentials": [
-			"dist/credentials/GithubIssuesApi.credentials.js",
-			"dist/credentials/GithubIssuesOAuth2Api.credentials.js"
+			"dist/credentials/ScraperApiApi.credentials.js"
 		],
 		"nodes": [
-			"dist/nodes/GithubIssues/GithubIssues.node.js",
-			"dist/nodes/Example/Example.node.js"
+			"dist/nodes/ScraperApi/ScraperApi.node.js"
 		]
 	},
 	"devDependencies": {
