@@ -5,6 +5,8 @@ import type {
 	INodeTypeDescription,
 } from 'n8n-workflow';
 import { NodeConnectionTypes, NodeOperationError } from 'n8n-workflow';
+import { ApiResource } from './resources/api.js';
+import type { ApiParameters } from './resources/types.js';
 
 export class ScraperApi implements INodeType {
 	description: INodeTypeDescription = {
@@ -123,55 +125,39 @@ export class ScraperApi implements INodeType {
 						device_type?: string;
 					};
 
-					const render = optionalParameters.render ?? false;
-					const countryCode = optionalParameters.country_code ?? '';
-					const premium = optionalParameters.premium ?? false;
-					const ultraPremium = optionalParameters.ultraPremium ?? false;
-					const deviceType = optionalParameters.device_type ?? 'desktop';
-
-					const credentials = await this.getCredentials('scraperApi-Api');
-
-					const qs: Record<string, string | boolean> = {
-						api_key: credentials.apiKey as string,
+					const apiResource = new ApiResource(this);
+					const apiParams: ApiParameters = {
 						url,
-						output_format: 'json',
-						autoparse: true,
 					};
 
-					if (render) {
-						qs.render = true;
+					if (optionalParameters.render) {
+						apiParams.render = optionalParameters.render;
 					}
 
-					if (countryCode) {
-						qs.country_code = countryCode;
+					if (optionalParameters.country_code) {
+						apiParams.country_code = optionalParameters.country_code;
 					}
 
-					if (premium) {
-						qs.premium = true;
+					if (optionalParameters.premium) {
+						apiParams.premium = optionalParameters.premium;
 					}
 
-					if (ultraPremium) {
-						qs.ultra_premium = true;
+					if (optionalParameters.ultraPremium) {
+						apiParams.ultra_premium = optionalParameters.ultraPremium;
 					}
 
-					if (deviceType) {
-						qs.device_type = deviceType;
+					if (optionalParameters.device_type) {
+						apiParams.device_type = optionalParameters.device_type;
 					}
 
-					const response = await this.helpers.httpRequest({
-						method: 'GET',
-						baseURL: 'https://api.scraperapi.com',
-						url: '/',
-						qs,
-						returnFullResponse: true,
-					});
+					const response = await apiResource.submitApiRequest(apiParams);
 
 					returnData.push({
 						json: {
-							html: response.body,
-							statusCode: response.statusCode,
+							body: response.body,
 							headers: response.headers,
-							url,
+							statusCode: response.statusCode,
+							statusMessage: response.statusMessage,
 						},
 						pairedItem: {
 							item: i,
