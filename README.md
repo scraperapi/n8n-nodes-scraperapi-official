@@ -10,7 +10,7 @@ _ScraperAPI_ is a solution to help you unlock and scrape any website, no matter 
 [Credentials](#credentials)
 [Compatibility](#compatibility)
 [Resources](#resources)  
-[Version history](#version-history)  <!-- delete if not using this section -->  
+[Version history](#version-history)
 
 ## Installation
 
