@@ -1,0 +1,24 @@
+{
+	"node": "n8n-nodes-base.ScraperApi",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": [
+		"Data & Storage",
+		"Miscellaneous",
+		"Development",
+		"Analytics",
+		"Utility"
+	],
+	"resources": {
+		"credentialDocumentation": [
+			{
+				"url": "https://docs.scraperapi.com/dashboard-and-billing/api-key"
+			}
+		],
+		"primaryDocumentation": [
+			{
+				"url": "https://docs.scraperapi.com"
+			}
+		]
+	}
+}
