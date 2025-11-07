@@ -6,11 +6,9 @@ _ScraperAPI_ is a solution to help you unlock and scrape any website, no matter 
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/reference/license/) workflow automation platform.
 
-[Installation](#installation)  
-[Operations](#operations)  
-[Credentials](#credentials)  <!-- delete if no auth needed -->  
-[Compatibility](#compatibility)  
-[Usage](#usage)  <!-- delete if not using this section -->  
+[Installation](#installation)
+[Credentials](#credentials)
+[Compatibility](#compatibility)
 [Resources](#resources)  
 [Version history](#version-history)  <!-- delete if not using this section -->  
 
@@ -18,14 +16,13 @@ _ScraperAPI_ is a solution to help you unlock and scrape any website, no matter 
 
 Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes/installation/) in the n8n community nodes documentation.
 
-## Resources
-
-- API Endpoint: use ScraperAPI's endpoint for web scraping. Configure parameters and send GET requests enabling JS rendering, setting geotargeting, etc.
-
-
 ## Credentials
 
 Sign up and get your API key [here](https://dashboard.scraperapi.com/signup)
+
+## Resources
+
+- API Endpoint: use ScraperAPI's endpoint for web scraping. Configure parameters and send GET requests enabling JS rendering, setting geotargeting, etc.
 
 ## Version history
 
