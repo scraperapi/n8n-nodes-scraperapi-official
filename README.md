@@ -1,4 +1,4 @@
-# n8n-nodes-scraperapi
+# ScraperAPI Official N8N node
 
 This is an n8n community node. It lets you use _ScraperAPI_ in your n8n workflows.
 
@@ -6,11 +6,11 @@ _ScraperAPI_ is a solution to help you unlock and scrape any website, no matter 
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/reference/license/) workflow automation platform.
 
-[Installation](#installation)
-[Credentials](#credentials)
-[Compatibility](#compatibility)
+[Installation](#installation)  
+[Credentials](#credentials)  
+[Compatibility](#compatibility)  
 [Resources](#resources)  
-[Version history](#version-history)
+[Version history](#version-history)  
 
 ## Installation
 

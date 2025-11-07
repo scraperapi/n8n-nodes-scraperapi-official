@@ -1,5 +1,5 @@
 {
-	"name": "n8n-nodes-scraperapi",
+	"name": "n8n-nodes-scraperapi-official",
 	"version": "0.1.0",
 	"description": "Official ScraperAPI nodes for n8n",
 	"license": "MIT",
@@ -15,7 +15,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/scraperapi/n8n-nodes-scraperapi.git"
+		"url": "git+https://github.com/scraperapi/n8n-nodes-scraperapi-official.git"
 	},
 	"scripts": {
 		"build": "n8n-node build",
