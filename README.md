@@ -13,13 +13,21 @@ This is an n8n community node that lets you use **ScraperAPI** in your n8n workf
 - [Usage](#usage)
 - [Resources](#resources)
 - [Parameters](#parameters)
-- [Example Workflows](#example-workflows)
 - [Documentation](#documentation)
 - [Version History](#version-history)
+- [More ScraperAPI Integrations](#more-scraperapi-integrations)
 
 ## Installation
 
 Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes/installation/) in the n8n community nodes documentation.
+
+### From the npm registry.
+
+1. Go to Settings > Community Nodes.
+2. Select Install.
+3. Write [`n8n-nodes-scraperapi-official`](https://www.npmjs.com/package/n8n-nodes-scraperapi-official) in the package name.
+4. Agree to the [risks](https://docs.n8n.io/integrations/community-nodes/risks/) of using community nodes: select I understand the risks of installing unverified code from a public source.
+5. Select Install. n8n installs the node, and returns to the Community Nodes list in Settings.
 
 ## Credentials
 
@@ -48,8 +56,8 @@ The ScraperAPI node allows you to scrape any website by making a simple GET requ
 ### Basic Usage
 
 1. Add a **ScraperAPI** node to your workflow
-2. Select the **API** resource
-3. Enter the **URL** you want to scrape
+2. Select the ScraperAPI resource, for example the **API**
+3. Enter the required parameters, for example the **URL** you want to scrape
 4. Configure any optional parameters (see [Parameters](#parameters) below)
 5. Execute the workflow
 
@@ -57,7 +65,7 @@ The node returns the scraped content.
 
 ## Resources
 
-### API Endpoint
+### API
 
 The **API** resource allows you to scrape any website using ScraperAPI's endpoint. It supports:
 
@@ -77,9 +85,9 @@ The **API** resource allows you to scrape any website using ScraperAPI's endpoin
 
 - **Country Code**: Two-letter ISO country code (e.g., `US`, `GB`, `DE`) for geo-targeted scraping.
 
-- **Device Type**: Choose the device type to scrape the page as:
-  - `Desktop`: Standard desktop browser user agent
-  - `Mobile`: Mobile device user agent
+- **Desktop Device**: Whether to scrape the page as a desktop device. **Note**: Cannot be combined with Mobile Device.
+
+- **Mobile Device**: Whether to scrape the page as a mobile device. **Note**: Cannot be combined with Desktop Device.
 
 - **Render**: Enable JavaScript rendering for pages that require JavaScript to load content. Set to `true` only when needed, as it increases processing time.
 
@@ -95,3 +103,28 @@ The **API** resource allows you to scrape any website using ScraperAPI's endpoin
 
 - **0.1.1**: Initial release with API resource support
 - **0.1.2**: Usage added to Documentation
+- **0.1.3**: Replace device_type options field with desktopDevice and mobileDevice boolean fields to support AI model auto-definition.
+
+## More ScraperAPI Integrations
+
+### MCP Server
+
+ScraperAPI also provides an **MCP (Model Context Protocol) server** that enables AI models and agents to scrape websites.
+
+#### Hosted MCP Server
+
+ScraperAPI offers a hosted MCP server that you can use with n8n's [MCP Client Tool](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolmcp/).
+
+**Configuration Steps:**
+
+1. Add an **MCP Client Tool** node to your workflow
+2. Configure the following settings:
+   - **Endpoint**: `https://mcp.scraperapi.com/mcp`
+   - **Server Transport**: `HTTP Streamable`
+   - **Authentication**: `Bearer Auth`
+   - **Credential for Bearer Auth**: Enter your ScraperAPI API key as a Bearer Token.
+   - **Tools to include**: `All` (or select specific tools as needed)
+
+#### Self-Hosted MCP Server
+
+If you prefer to self-host the MCP server, you can find the implementation and setup instructions in the [scraperapi-mcp repository](https://github.com/scraperapi/scraperapi-mcp).

@@ -5,8 +5,7 @@ import type {
 	INodeTypeDescription,
 } from 'n8n-workflow';
 import { NodeConnectionTypes, NodeOperationError } from 'n8n-workflow';
-import { ApiResource } from './resources/api.js';
-import type { ApiParameters } from './resources/types.js';
+import { ApiResource } from './resources/ApiResource.js';
 
 export class ScraperApi implements INodeType {
 	description: INodeTypeDescription = {
@@ -66,15 +65,18 @@ export class ScraperApi implements INodeType {
 						description: 'Two-letter country code for geo-specific scraping',
 					},
 					{
-						displayName: 'Device Type',
-						name: 'device_type',
-						type: 'options',
-						default: 'desktop',
-						options: [
-							{ name: 'Desktop', value: 'desktop' },
-							{ name: 'Mobile', value: 'mobile' },
-						],
-						description: 'Choose the device type to scrape the page on',
+						displayName: 'Desktop Device',
+						name: 'desktopDevice',
+						type: 'boolean',
+						default: false,
+						description: 'Whether to scrape the page as a desktop device',
+					},
+					{
+						displayName: 'Mobile Device',
+						name: 'mobileDevice',
+						type: 'boolean',
+						default: false,
+						description: 'Whether to scrape the page as a mobile device',
 					},
 					{
 						displayName: 'Premium',
@@ -111,46 +113,8 @@ export class ScraperApi implements INodeType {
 		for (let i = 0; i < items.length; i++) {
 			try {
 				if (resource === 'api') {
-					const url = this.getNodeParameter('url', i) as string;
-
-					if (!url) {
-						throw new NodeOperationError(this.getNode(), 'URL is required');
-					}
-
-					const optionalParameters = this.getNodeParameter('optionalParameters', i, {}) as {
-						render?: boolean;
-						country_code?: string;
-						premium?: boolean;
-						ultraPremium?: boolean;
-						device_type?: string;
-					};
-
 					const apiResource = new ApiResource(this);
-					const apiParams: ApiParameters = {
-						url,
-					};
-
-					if (optionalParameters.render) {
-						apiParams.render = optionalParameters.render;
-					}
-
-					if (optionalParameters.country_code) {
-						apiParams.country_code = optionalParameters.country_code;
-					}
-
-					if (optionalParameters.premium) {
-						apiParams.premium = optionalParameters.premium;
-					}
-
-					if (optionalParameters.ultraPremium) {
-						apiParams.ultra_premium = optionalParameters.ultraPremium;
-					}
-
-					if (optionalParameters.device_type) {
-						apiParams.device_type = optionalParameters.device_type;
-					}
-
-					const response = await apiResource.submitApiRequest(apiParams);
+					const response = await apiResource.executeRequest(i);
 
 					returnData.push({
 						json: {
@@ -163,6 +127,8 @@ export class ScraperApi implements INodeType {
 							item: i,
 						},
 					});
+				} else {
+					throw new NodeOperationError(this.getNode(), `Unknown resource type: ${resource}`);
 				}
 			} catch (error) {
 				if (this.continueOnFail()) {

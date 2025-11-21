@@ -1,10 +1,3 @@
-export enum OutputFormat {
-    text = 'text',
-	markdown = 'markdown',
-	json = 'json',
-    csv = 'csv',
-}
-
 export interface ApiParameters {
 	url: string;
     country_code?: string;
