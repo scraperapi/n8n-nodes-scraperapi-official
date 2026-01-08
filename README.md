@@ -61,7 +61,19 @@ The ScraperAPI node allows you to scrape any website by making a simple GET requ
 4. Configure any optional parameters (see [Parameters](#parameters) below)
 5. Execute the workflow
 
-The node returns the scraped content.
+The node returns a JSON object with the following structure:
+
+```json
+{
+  "resource": "api",
+  "response": {
+    "body": "...",
+    "headers": {...},
+    "statusCode": 200,
+    "statusMessage": "OK"
+  }
+}
+```
 
 ## Resources
 
@@ -74,6 +86,7 @@ The **API** resource allows you to scrape any website using ScraperAPI's endpoin
 - Device-specific user agents (desktop/mobile)
 - Premium and ultra-premium proxy options
 - Automatic parsing of structured data for select websites
+- Multiple output formats (markdown, text, CSV, JSON)
 
 #### Parameters
 
@@ -83,11 +96,21 @@ The **API** resource allows you to scrape any website using ScraperAPI's endpoin
 
 #### Optional Parameters
 
+- **Autoparse**: Whether to activate auto parsing for select websites. When enabled, ScraperAPI will automatically parse structured data from supported websites (JSON format by default).
+
 - **Country Code**: Two-letter ISO country code (e.g., `US`, `GB`, `DE`) for geo-targeted scraping.
 
 - **Desktop Device**: Whether to scrape the page as a desktop device. **Note**: Cannot be combined with Mobile Device.
 
 - **Mobile Device**: Whether to scrape the page as a mobile device. **Note**: Cannot be combined with Desktop Device.
+
+- **Output Format**: Output parsing format for the scraped content. Available options:
+  - **Markdown**: Returns content in Markdown format.
+  - **Text**: Returns content as plain text.
+  - **CSV**: Returns content in CSV format. **Note**: Only available for autoparse websites.
+  - **JSON**: Returns content in JSON format. **Note**: Only available for autoparse websites.
+  
+  If not specified, the content will be returned as HTML.
 
 - **Render**: Enable JavaScript rendering for pages that require JavaScript to load content. Set to `true` only when needed, as it increases processing time.
 

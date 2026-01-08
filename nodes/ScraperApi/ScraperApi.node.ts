@@ -58,6 +58,13 @@ export class ScraperApi implements INodeType {
 				displayOptions: { show: { resource: ['api'] } },
 				options: [
 					{
+						displayName: 'Autoparse',
+						name: 'autoparse',
+						type: 'boolean',
+						default: true,
+						description: 'Whether to activate auto parsing for select websites. The data will be returned in JSON format by default.',
+					},
+					{
 						displayName: 'Country Code',
 						name: 'country_code',
 						type: 'string',
@@ -77,6 +84,19 @@ export class ScraperApi implements INodeType {
 						type: 'boolean',
 						default: false,
 						description: 'Whether to scrape the page as a mobile device',
+					},
+					{
+						displayName: 'Output Format',
+						name: 'output_format',
+						type: 'options',
+						options: [
+							{ name: 'Markdown', value: 'markdown' },
+							{ name: 'Text', value: 'text' },
+							{ name: 'CSV', value: 'csv' },
+							{ name: 'JSON', value: 'json' },
+						],
+						default: 'json',
+						description: 'Output parsing format for the scraped content. If not specified, the content will be returned as HTML. CSV and JSON are only available for autoparse websites.',
 					},
 					{
 						displayName: 'Premium',
@@ -108,7 +128,7 @@ export class ScraperApi implements INodeType {
 		const items = this.getInputData();
 		const returnData: INodeExecutionData[] = [];
 
-		const resource = this.getNodeParameter('resource', 0) as string;
+		const resource = this.getNodeParameter('resource', 0);
 
 		for (let i = 0; i < items.length; i++) {
 			try {
@@ -118,10 +138,13 @@ export class ScraperApi implements INodeType {
 
 					returnData.push({
 						json: {
-							body: response.body,
-							headers: response.headers,
-							statusCode: response.statusCode,
-							statusMessage: response.statusMessage,
+							resource: 'api',
+							response: {
+								body: response.body,
+								headers: response.headers,
+								statusCode: response.statusCode,
+								statusMessage: response.statusMessage,
+							},
 						},
 						pairedItem: {
 							item: i,

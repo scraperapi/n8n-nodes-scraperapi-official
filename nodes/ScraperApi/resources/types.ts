@@ -5,6 +5,8 @@ export interface ApiParameters {
     premium?: boolean;
     ultra_premium?: boolean;
     render?: boolean;
+    output_format?: 'markdown' | 'text' | 'csv' | 'json';
+    autoparse?: boolean;
 }
 
 export interface ApiResponse {

@@ -21,6 +21,8 @@ export class ApiResource {
 			ultraPremium?: boolean;
 			desktopDevice?: boolean;
 			mobileDevice?: boolean;
+			output_format?: 'markdown' | 'text' | 'csv' | 'json';
+			autoparse?: boolean;
 		};
 
 		const apiParams: ApiParameters = {
@@ -49,16 +51,30 @@ export class ApiResource {
 			apiParams.device_type = 'desktop';
 		}
 
+		if (optionalParameters.output_format) {
+			apiParams.output_format = optionalParameters.output_format;
+		}
+
+		if (optionalParameters.autoparse !== undefined) {
+			apiParams.autoparse = optionalParameters.autoparse;
+		}
+
 		return apiParams;
 	}
 
 	async submitRequest(params: ApiParameters): Promise<ApiResponse> {
 		const qs: Record<string, string | boolean | number> = {
 			url: params.url,
-			output_format: 'json',
-			autoparse: true,
             scraper_sdk: 'n8n',
 		};
+
+		if (params.autoparse) {
+			qs.autoparse = params.autoparse;
+		}
+
+		if (params.output_format) {
+			qs.output_format = params.output_format;
+		}
 
 		if (params.render) {
 			qs.render = true;
