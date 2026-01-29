@@ -5,7 +5,8 @@ import type {
 	INodeTypeDescription,
 } from 'n8n-workflow';
 import { NodeConnectionTypes, NodeOperationError } from 'n8n-workflow';
-import { ApiResource } from './resources/ApiResource.js';
+import { ApiResource } from './resources/api/ApiResource';
+import { ApiOperations, ApiFields } from './resources/api/ApiDescription';
 
 export class ScraperApi implements INodeType {
 	description: INodeTypeDescription = {
@@ -14,6 +15,7 @@ export class ScraperApi implements INodeType {
 		icon: 'file:../../icons/ScraperApi.svg',
 		group: ['transform'],
 		version: 1,
+		subtitle: '={{ $parameter["operation"] + ": " + $parameter["resource"] }}',
 		description: 'Official ScraperAPI nodes for n8n',
 		defaults: {
 			name: 'ScraperAPI',
@@ -40,87 +42,8 @@ export class ScraperApi implements INodeType {
 				description: 'Choose your ScraperAPI resource',
 				noDataExpression: true,
 			},
-            {
-                displayName: 'URL',
-                name: 'url',
-                type: 'string',
-                displayOptions: { show: { resource: ['api'] } },
-                default: '',
-                required: true,
-                description: 'Target URL to scrape',
-            },
-			{
-				displayName: 'Optional Parameters',
-				name: 'optionalParameters',
-				type: 'collection',
-				placeholder: 'Add Parameter',
-				default: {},
-				displayOptions: { show: { resource: ['api'] } },
-				options: [
-					{
-						displayName: 'Autoparse',
-						name: 'autoparse',
-						type: 'boolean',
-						default: true,
-						description: 'Whether to activate auto parsing for select websites. The data will be returned in JSON format by default.',
-					},
-					{
-						displayName: 'Country Code',
-						name: 'country_code',
-						type: 'string',
-						default: '',
-						description: 'Two-letter country code for geo-specific scraping',
-					},
-					{
-						displayName: 'Desktop Device',
-						name: 'desktopDevice',
-						type: 'boolean',
-						default: false,
-						description: 'Whether to scrape the page as a desktop device',
-					},
-					{
-						displayName: 'Mobile Device',
-						name: 'mobileDevice',
-						type: 'boolean',
-						default: false,
-						description: 'Whether to scrape the page as a mobile device',
-					},
-					{
-						displayName: 'Output Format',
-						name: 'output_format',
-						type: 'options',
-						options: [
-							{ name: 'Markdown', value: 'markdown' },
-							{ name: 'Text', value: 'text' },
-							{ name: 'CSV', value: 'csv' },
-							{ name: 'JSON', value: 'json' },
-						],
-						default: 'json',
-						description: 'Output parsing format for the scraped content. If not specified, the content will be returned as HTML. CSV and JSON are only available for autoparse websites.',
-					},
-					{
-						displayName: 'Premium',
-						name: 'premium',
-						type: 'boolean',
-						default: false,
-						description: 'Whether to use premium residential/mobile proxies for higher success rate (Can not be combined with UltraPremium)',
-					},
-					{
-						displayName: 'Render',
-						name: 'render',
-						type: 'boolean',
-						default: false,
-						description: 'Whether to enable JavaScript rendering only when needed for dynamic content',
-					},
-					{
-						displayName: 'Ultra Premium',
-						name: 'ultraPremium',
-						type: 'boolean',
-						default: false,
-						description: 'Whether to activate advanced bypass mechanisms (Can not be combined with Premium)',
-					},
-				],
-			}
+			...ApiOperations,
+			...ApiFields,
 		],
 	};
 

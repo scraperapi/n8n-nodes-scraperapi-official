@@ -1,4 +1,4 @@
-import { ApiParameters, ApiResponse } from './types.js';
+import { ApiParameters, ApiResponse } from './ApiTypes';
 import { IExecuteFunctions, IHttpRequestOptions, NodeOperationError } from 'n8n-workflow';
 
 export class ApiResource {

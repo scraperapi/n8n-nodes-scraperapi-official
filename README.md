@@ -9,6 +9,7 @@ This is an n8n community node that lets you use **ScraperAPI** in your n8n workf
 ## Table of Contents
 
 - [Installation](#installation)
+- [Operations](#operations)
 - [Credentials](#credentials)
 - [Usage](#usage)
 - [Resources](#resources)
@@ -28,6 +29,11 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 3. Write [`n8n-nodes-scraperapi-official`](https://www.npmjs.com/package/n8n-nodes-scraperapi-official) in the package name.
 4. Agree to the [risks](https://docs.n8n.io/integrations/community-nodes/risks/) of using community nodes: select I understand the risks of installing unverified code from a public source.
 5. Select Install. n8n installs the node, and returns to the Community Nodes list in Settings.
+
+## Operations
+
+  - API
+    - Send a Request
 
 ## Credentials
 
