@@ -1,0 +1,207 @@
+import { INodeProperties } from "n8n-workflow";
+
+export const CrawlerOperations: INodeProperties[] = [
+    {
+        displayName: 'Operation',
+        name: 'operation',
+        type: 'options',
+        noDataExpression: true,
+        displayOptions: {
+            show: {
+                resource: ['crawler'],
+            },
+        },
+        options: [
+            {
+                name: 'Initiate a Crawler Job',
+                value: 'crawlerJobCreate',
+                action: 'Initiate a crawler job',
+            },
+            {
+                name: 'Get a Job Status',
+                value: 'crawlerJobGet',
+                action: 'Get a job status',
+            },
+            {
+                name: 'Cancel a Crawler Job',
+                value: 'crawlerJobDelete',
+                action: 'Cancel a crawler job',
+            },
+        ],
+        default: 'crawlerJobCreate',
+    },
+];
+
+const crawlerParameters: INodeProperties[] = [
+    {
+        displayName: 'Start URL',
+        name: 'crawlerStartUrl',
+        type: 'string',
+        displayOptions: { show: { operation: ['crawlerJobCreate'] } },
+        default: '',
+        required: true,
+        description: 'The URL which is going to be the starting point of the crawling',
+    },
+    {
+        displayName: 'Max Depth',
+        name: 'crawlerMaxDepth',
+        type: 'number',
+        displayOptions: { show: { operation: ['crawlerJobCreate'] } },
+        default: null,
+        description: 'Maximum depth level of the crawling task. The start URL is at depth 0. Either this or crawlBudget must be set.',
+    },
+    {
+        displayName: 'Crawl Budget',
+        name: 'crawlerCrawlBudget',
+        type: 'number',
+        displayOptions: { show: { operation: ['crawlerJobCreate'] } },
+        default: null,
+        description: 'The maximum amount of ScraperAPI credits that the crawling task should consume. Either this or maxDepth must be set.',
+    },
+    {
+        displayName: 'Regular Expression for URLs',
+        name: 'crawlerUrlRegexpInclude',
+        type: 'string',
+        displayOptions: { show: { operation: ['crawlerJobCreate'] } },
+        default: '.*',
+        required: true,
+        description: 'The regexp is used to extract additional URLs to crawl from each page the crawler visits. Use .* to crawl all pages on the site. You can then use tools like regex101 for debugging',
+    },
+    {
+        displayName: 'Callback URL',
+        name: 'crawlerCallbackUrl',
+        type: 'string',
+        displayOptions: { show: { operation: ['crawlerJobCreate'] } },
+        default: '',
+        required: true,
+        description: 'The results of both successful and failed scrape attempts throughout the crawling job will be streamed to the specified webhook',
+    },
+    {
+        displayName: 'Optional Crawler Parameters',
+        name: 'crawlerOptionalParameters',
+        type: 'collection',
+        placeholder: 'Add Parameter',
+        default: {},
+        displayOptions: { show: { operation: ['crawlerJobCreate'] } },
+        options: [
+            {
+                displayName: 'API Parameters',
+                name: 'crawlerApiParameters',
+                type: 'collection',
+                placeholder: 'Add Parameter',
+                default: {},
+                options: [
+                    {
+                        displayName: 'Autoparse',
+                        name: 'crawlerApiAutoparse',
+                        type: 'boolean',
+                        default: true,
+                        description: 'Whether to activate auto parsing for select websites. The data will be returned in JSON format by default.',
+                    },
+                    {
+                        displayName: 'Country Code',
+                        name: 'crawlerApiCountryCode',
+                        type: 'string',
+                        default: '',
+                        description: 'Two-letter country code for geo-specific scraping',
+                    },
+                    {
+                        displayName: 'Desktop Device',
+                        name: 'crawlerApiDesktopDevice',
+                        type: 'boolean',
+                        default: false,
+                        description: 'Whether to scrape the page as a desktop device',
+                    },
+                    {
+                        displayName: 'Mobile Device',
+                        name: 'crawlerApiMobileDevice',
+                        type: 'boolean',
+                        default: false,
+                        description: 'Whether to scrape the page as a mobile device',
+                    },
+                    {
+                        displayName: 'Output Format',
+                        name: 'crawlerApiOutputFormat',
+                        type: 'options',
+                        options: [
+                            { name: 'CSV', value: 'csv' },
+                            { name: 'HTML', value: 'html' },
+                            { name: 'JSON', value: 'json' },
+                            { name: 'Markdown', value: 'markdown' },
+                            { name: 'Text', value: 'text' },
+                        ],
+                        default: 'html',
+                        description: 'Output parsing format for the scraped content. If not specified, the content will be returned as HTML. CSV and JSON are only available for autoparse websites.',
+                    },
+                    {
+                        displayName: 'Premium',
+                        name: 'crawlerApiPremium',
+                        type: 'boolean',
+                        default: false,
+                        description: 'Whether to use premium residential/mobile proxies for higher success rate (Can not be combined with UltraPremium)',
+                    },
+                    {
+                        displayName: 'Render',
+                        name: 'crawlerApiRender',
+                        type: 'boolean',
+                        default: false,
+                        description: 'Whether to enable JavaScript rendering only when needed for dynamic content',
+                    },
+                    {
+                        displayName: 'Ultra Premium',
+                        name: 'crawlerApiUltraPremium',
+                        type: 'boolean',
+                        default: false,
+                        description: 'Whether to activate advanced bypass mechanisms (Can not be combined with Premium)',
+                    },
+                ],
+            },
+            {
+                displayName: 'Enabled',
+                name: 'crawlerEnabled',
+                type: 'boolean',
+                default: true,
+                description: 'Whether the crawler runs according to the schedule/interval settings. If false, the crawler will not run and only the crawler config will be created. Defaults to true if not specified.',
+            },
+            {
+                displayName: 'Regular Expression for URLs EXCLUDED',
+                name: 'crawlerUrlRegexpExclude',
+                type: 'string',
+                default: '',
+                description: 'Enter a regex pattern to skip certain URLs. Any URL that matches this pattern will not be crawled.',
+            },
+            {
+                displayName: 'Schedule Interval',
+                name: 'crawlerScheduleInterval',
+                type: 'options',
+                default: 'once',
+                options: [
+                    { name: 'Daily', value: 'daily' },
+                    { name: 'Hourly', value: 'hourly' },
+                    { name: 'Monthly', value: 'monthly' },
+                    { name: 'Once', value: 'once' },
+                    { name: 'Weekly', value: 'weekly' },
+                ],
+                description: 'The interval at which the crawler will run',
+            },
+            {
+                displayName: 'Schedule Name',
+                name: 'crawlerScheduleName',
+                type: 'string',
+                default: '',
+                description: 'The name of the schedule/interval to run the crawler job. This will be used to identify the schedule in the ScraperAPI dashboard.',
+            },
+        ],
+    },
+    {
+        displayName: 'Job ID',
+        name: 'crawlerJobId',
+        type: 'string',
+        displayOptions: { show: { operation: ['crawlerJobGet', 'crawlerJobDelete'] } },
+        default: '',
+        required: true,
+        description: 'The ID of the crawler job to get or delete',
+    },
+];
+
+export const CrawlerFields: INodeProperties[] = [...crawlerParameters];

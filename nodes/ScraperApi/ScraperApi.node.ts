@@ -7,6 +7,8 @@ import type {
 import { NodeConnectionTypes, NodeOperationError } from 'n8n-workflow';
 import { ApiResource } from './resources/api/ApiResource';
 import { ApiOperations, ApiFields } from './resources/api/ApiDescription';
+import { CrawlerResource } from './resources/crawler/CrawlerResource';
+import { CrawlerOperations, CrawlerFields } from './resources/crawler/CrawlerDescription';
 
 export class ScraperApi implements INodeType {
 	description: INodeTypeDescription = {
@@ -36,6 +38,7 @@ export class ScraperApi implements INodeType {
 				type: 'options',
 				options: [
 					{ name: 'API', value: 'api' },
+					{ name: 'Crawler', value: 'crawler' },
 				],
 				default: 'api',
 				required: true,
@@ -44,6 +47,8 @@ export class ScraperApi implements INodeType {
 			},
 			...ApiOperations,
 			...ApiFields,
+			...CrawlerOperations,
+			...CrawlerFields,
 		],
 	};
 
@@ -53,29 +58,35 @@ export class ScraperApi implements INodeType {
 
 		const resource = this.getNodeParameter('resource', 0);
 
+		const resourceMap = {
+			api: ApiResource,
+			crawler: CrawlerResource,
+		} as const;
+
 		for (let i = 0; i < items.length; i++) {
 			try {
-				if (resource === 'api') {
-					const apiResource = new ApiResource(this);
-					const response = await apiResource.executeRequest(i);
-
-					returnData.push({
-						json: {
-							resource: 'api',
-							response: {
-								body: response.body,
-								headers: response.headers,
-								statusCode: response.statusCode,
-								statusMessage: response.statusMessage,
-							},
-						},
-						pairedItem: {
-							item: i,
-						},
-					});
-				} else {
+				const ResourceClass = resourceMap[resource as keyof typeof resourceMap];
+				if (!ResourceClass) {
 					throw new NodeOperationError(this.getNode(), `Unknown resource type: ${resource}`);
 				}
+
+				const resourceInstance = new ResourceClass(this);
+				const response = await resourceInstance.executeRequest(i);
+
+				returnData.push({
+					json: {
+						resource,
+						response: {
+							body: response.body,
+							headers: response.headers,
+							statusCode: response.statusCode,
+							statusMessage: response.statusMessage,
+						},
+					},
+					pairedItem: {
+						item: i,
+					},
+				});
 			} catch (error) {
 				if (this.continueOnFail()) {
 					returnData.push({

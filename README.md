@@ -34,6 +34,10 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 
   - API
     - Send a Request
+  - Crawler
+    - Initiate a crawler job
+    - Get a job status
+    - Cancel a crawler job
 
 ## Credentials
 
@@ -57,14 +61,15 @@ For more information, see the [ScraperAPI API Key Documentation](https://docs.sc
 
 ## Usage
 
-The ScraperAPI node allows you to scrape any website by making a simple GET request. The node handles all the complexity of proxies, browser automation, and CAPTCHA solving.
+The ScraperAPI node supports two resources:
 
-### Basic Usage
+- **API**: Scrape a single URL with a GET request. The node handles proxies, browser automation, and CAPTCHA solving.
+- **Crawler**: Run multi-page crawler jobs that follow links from a start URL and stream results to a webhook.
 
 1. Add a **ScraperAPI** node to your workflow
 2. Select the ScraperAPI resource, for example the **API**
 3. Enter the required parameters, for example the **URL** you want to scrape
-4. Configure any optional parameters (see [Parameters](#parameters) below)
+4. Configure any optional parameter you need
 5. Execute the workflow
 
 The node returns a JSON object with the following structure:
@@ -103,26 +108,48 @@ The **API** resource allows you to scrape any website using ScraperAPI's endpoin
 #### Optional Parameters
 
 - **Autoparse**: Whether to activate auto parsing for select websites. When enabled, ScraperAPI will automatically parse structured data from supported websites (JSON format by default).
-
 - **Country Code**: Two-letter ISO country code (e.g., `US`, `GB`, `DE`) for geo-targeted scraping.
-
 - **Desktop Device**: Whether to scrape the page as a desktop device. **Note**: Cannot be combined with Mobile Device.
-
 - **Mobile Device**: Whether to scrape the page as a mobile device. **Note**: Cannot be combined with Desktop Device.
-
 - **Output Format**: Output parsing format for the scraped content. Available options:
   - **Markdown**: Returns content in Markdown format.
   - **Text**: Returns content as plain text.
   - **CSV**: Returns content in CSV format. **Note**: Only available for autoparse websites.
   - **JSON**: Returns content in JSON format. **Note**: Only available for autoparse websites.
-  
+
   If not specified, the content will be returned as HTML.
-
 - **Render**: Enable JavaScript rendering for pages that require JavaScript to load content. Set to `true` only when needed, as it increases processing time.
-
 - **Premium**: Use premium residential/mobile proxies for higher success rates. This option costs more but provides better reliability. **Note**: Cannot be combined with Ultra Premium.
-
 - **Ultra Premium**: Activate advanced bypass mechanisms for the most difficult websites. This is the most powerful option for sites with advanced anti-bot protection. **Note**: Cannot be combined with Premium.
+
+### Crawler
+
+The **Crawler** resource uses the [ScraperAPI Crawler API](https://docs.scraperapi.com/scraperapi-crawler-v2.0/crawler-api/job-lifecycle) to run crawling jobs to discover and scrapes multiple pages, streaming results to a webhook you provide.
+
+#### Crawler Operations
+
+- **Initiate a Crawler Job**: Create and start a new crawler job. You receive a `jobId` to track or cancel the job.
+- **Get a Job Status**: Check the current state of a job.
+- **Cancel a Crawler Job**: Stop a running job.
+
+#### Required Parameters
+
+- Initiate a Crawler Job
+  - **Start URL**: The URL where crawling begins (depth 0).
+  - **Max Depth** or **Crawl Budget**: You must set one of these. **Max Depth** is the maximum depth level (start URL = 0). **Crawl Budget** is the maximum ScraperAPI credits the job may consume.
+  - **Regular Expression for URLs**: Regex used to decide which links to crawl from each page. Use `.*` to allow all pages on the site. Use [regex101](https://regex101.com/) for testing.
+  - **Callback URL**: Webhook URL where ScraperAPI sends results. Both successful and failed scrape attempts are streamed here; when the job finishes, a job summary is also sent.
+- Get Status / Cancel
+  - **Job ID**: The crawler job ID returned when you initiated the job.
+
+#### Optional Parameters
+
+- Initiate a Crawler Job
+  - **Regular Expression for URLs EXCLUDED**: Regex to skip URLs (e.g. `.*/product/.*`). Leave empty to crawl all URLs that pass the include regex.
+  - **API Parameters**: Per-page scrape settings (country code, device, render, premium, output format, etc.). Supported options are documented above in the API resource.
+  - **Enabled**: When `true`, the crawler runs according to the schedule. When `false`, only the crawler configuration is created; the job does not run. Defaults to `true`.
+  - **Schedule Name**: Name for the crawler (e.g. for the dashboard).
+  - **Schedule Interval**: When the crawler runs: `once`, `hourly`, `daily`, `weekly`, or `monthly`.
 
 ## Documentation
 
@@ -132,7 +159,9 @@ The **API** resource allows you to scrape any website using ScraperAPI's endpoin
 
 - **0.1.1**: Initial release with API resource support
 - **0.1.2**: Usage added to Documentation
-- **0.1.3**: Replace device_type options field with desktopDevice and mobileDevice boolean fields to support AI model auto-definition.
+- **0.2.0**: Replace device_type options field with desktopDevice and mobileDevice boolean fields to support AI model auto-definition.
+- **1.0.0**: output_format and autoparse parameters supported.
+- **1.1.0**: Crawler resource: initiate crawler jobs, get job status, and cancel jobs.
 
 ## More ScraperAPI Integrations
 

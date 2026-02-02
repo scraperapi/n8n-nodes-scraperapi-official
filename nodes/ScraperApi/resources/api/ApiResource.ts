@@ -8,55 +8,55 @@ export class ApiResource {
 		this.n8n = n8n;
 	}
 	buildParameters(itemIndex: number): ApiParameters {
-		const url = this.n8n.getNodeParameter('url', itemIndex) as string;
+		const url = this.n8n.getNodeParameter('apiUrl', itemIndex) as string;
 
 		if (!url) {
 			throw new NodeOperationError(this.n8n.getNode(), 'URL is required');
 		}
 
-		const optionalParameters = this.n8n.getNodeParameter('optionalParameters', itemIndex, {}) as {
-			render?: boolean;
-			country_code?: string;
-			premium?: boolean;
-			ultraPremium?: boolean;
-			desktopDevice?: boolean;
-			mobileDevice?: boolean;
-			output_format?: 'markdown' | 'text' | 'csv' | 'json';
-			autoparse?: boolean;
+		const optionalParameters = this.n8n.getNodeParameter('apiOptionalParameters', itemIndex, {}) as {
+			apiRender?: boolean;
+			apiCountryCode?: string;
+			apiPremium?: boolean;
+			apiUltraPremium?: boolean;
+			apiDesktopDevice?: boolean;
+			apiMobileDevice?: boolean;
+			apiOutputFormat?: 'markdown' | 'text' | 'csv' | 'json';
+			apiAutoparse?: boolean;
 		};
 
 		const apiParams: ApiParameters = {
 			url,
 		};
 
-		if (optionalParameters.render) {
-			apiParams.render = optionalParameters.render;
+		if (optionalParameters.apiRender) {
+			apiParams.render = optionalParameters.apiRender;
 		}
 
-		if (optionalParameters.country_code) {
-			apiParams.country_code = optionalParameters.country_code;
+		if (optionalParameters.apiCountryCode) {
+			apiParams.country_code = optionalParameters.apiCountryCode;
 		}
 
-		if (optionalParameters.premium) {
-			apiParams.premium = optionalParameters.premium;
+		if (optionalParameters.apiPremium) {
+			apiParams.premium = optionalParameters.apiPremium;
 		}
 
-		if (optionalParameters.ultraPremium) {
-			apiParams.ultra_premium = optionalParameters.ultraPremium;
+		if (optionalParameters.apiUltraPremium) {
+			apiParams.ultra_premium = optionalParameters.apiUltraPremium;
 		}
 
-		if (optionalParameters.mobileDevice) {
+		if (optionalParameters.apiMobileDevice) {
 			apiParams.device_type = 'mobile';
-		} else if (optionalParameters.desktopDevice) {
+		} else if (optionalParameters.apiDesktopDevice) {
 			apiParams.device_type = 'desktop';
 		}
 
-		if (optionalParameters.output_format) {
-			apiParams.output_format = optionalParameters.output_format;
+		if (optionalParameters.apiOutputFormat) {
+			apiParams.output_format = optionalParameters.apiOutputFormat;
 		}
 
-		if (optionalParameters.autoparse !== undefined) {
-			apiParams.autoparse = optionalParameters.autoparse;
+		if (optionalParameters.apiAutoparse !== undefined) {
+			apiParams.autoparse = optionalParameters.apiAutoparse;
 		}
 
 		return apiParams;
