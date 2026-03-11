@@ -9,6 +9,8 @@ import { ApiResource } from './resources/api/ApiResource';
 import { ApiOperations, ApiFields } from './resources/api/ApiDescription';
 import { CrawlerResource } from './resources/crawler/CrawlerResource';
 import { CrawlerOperations, CrawlerFields } from './resources/crawler/CrawlerDescription';
+import { SdeResource } from './resources/sde/SdeResource';
+import { SdePlatform, SdeOperations, SdeFields } from './resources/sde/SdeDescription';
 
 export class ScraperApi implements INodeType {
 	description: INodeTypeDescription = {
@@ -39,15 +41,19 @@ export class ScraperApi implements INodeType {
 				options: [
 					{ name: 'API', value: 'api' },
 					{ name: 'Crawler', value: 'crawler' },
+					{ name: 'Structured Data Endpoint', value: 'sde' },
 				],
 				default: 'api',
 				required: true,
 				description: 'Choose your ScraperAPI resource',
 				noDataExpression: true,
 			},
+			...SdePlatform,
 			...ApiOperations,
-			...ApiFields,
+			...SdeOperations,
 			...CrawlerOperations,
+			...ApiFields,
+			...SdeFields,
 			...CrawlerFields,
 		],
 	};
@@ -61,6 +67,7 @@ export class ScraperApi implements INodeType {
 		const resourceMap = {
 			api: ApiResource,
 			crawler: CrawlerResource,
+			sde: SdeResource,
 		} as const;
 
 		for (let i = 0; i < items.length; i++) {
