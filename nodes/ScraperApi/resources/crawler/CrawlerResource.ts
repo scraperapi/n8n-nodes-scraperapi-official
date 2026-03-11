@@ -5,6 +5,7 @@ const CRAWLER_BASE_URL = 'https://crawler.scraperapi.com';
 
 interface CreateJobBody extends CrawlerParameters {
 	api_key: string;
+	scraper_sdk: string;
 }
 
 export class CrawlerResource {
@@ -72,6 +73,7 @@ export class CrawlerResource {
 
 		const params: CreateJobBody = {
 			api_key: credentials.apiKey,
+			scraper_sdk: 'n8n',
 			start_url: startUrl,
 			url_regexp_include: urlRegexpInclude,
 			schedule: {
@@ -144,7 +146,7 @@ export class CrawlerResource {
 			method: 'GET',
 			baseURL: CRAWLER_BASE_URL,
 			url: `/job/${encodeURIComponent(jobId)}/status`,
-			qs: { api_key: credentials.apiKey },
+			qs: { api_key: credentials.apiKey, scraper_sdk: 'n8n' },
 			returnFullResponse: true,
 		};
 
@@ -167,7 +169,7 @@ export class CrawlerResource {
 			method: 'DELETE',
 			baseURL: CRAWLER_BASE_URL,
 			url: `/job/${encodeURIComponent(jobId)}`,
-			qs: { api_key: credentials.apiKey },
+			qs: { api_key: credentials.apiKey, scraper_sdk: 'n8n' },
 			returnFullResponse: true,
 		};
 
