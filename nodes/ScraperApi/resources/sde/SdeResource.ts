@@ -12,7 +12,7 @@ const OPERATION_CONFIG: Record<string, OperationConfig> = {
 	amazonProduct: {
 		path: '/structured/amazon/product',
 		required: [{ field: 'sdeAsin', param: 'asin' }],
-		collection: 'sdeAmazonOptions',
+		collection: 'sdeAmazonProductOptions',
 		optional: {
 			tld: 'tld',
 			countryCode: 'country_code',
@@ -22,7 +22,7 @@ const OPERATION_CONFIG: Record<string, OperationConfig> = {
 	amazonSearch: {
 		path: '/structured/amazon/search',
 		required: [{ field: 'sdeQuery', param: 'query' }],
-		collection: 'sdeAmazonOptions',
+		collection: 'sdeAmazonSearchOptions',
 		optional: {
 			tld: 'tld',
 			countryCode: 'country_code',
@@ -35,7 +35,7 @@ const OPERATION_CONFIG: Record<string, OperationConfig> = {
 	amazonOffers: {
 		path: '/structured/amazon/offers',
 		required: [{ field: 'sdeAsin', param: 'asin' }],
-		collection: 'sdeAmazonOptions',
+		collection: 'sdeAmazonOffersOptions',
 		optional: {
 			tld: 'tld',
 			countryCode: 'country_code',
@@ -51,7 +51,7 @@ const OPERATION_CONFIG: Record<string, OperationConfig> = {
 	googleSearch: {
 		path: '/structured/google/search',
 		required: [{ field: 'sdeQuery', param: 'query' }],
-		collection: 'sdeGoogleOptions',
+		collection: 'sdeGoogleSearchOptions',
 		optional: {
 			tld: 'tld',
 			countryCode: 'country_code',
@@ -63,7 +63,7 @@ const OPERATION_CONFIG: Record<string, OperationConfig> = {
 	googleJobs: {
 		path: '/structured/google/jobs',
 		required: [{ field: 'sdeQuery', param: 'query' }],
-		collection: 'sdeGoogleOptions',
+		collection: 'sdeGoogleJobsOptions',
 		optional: {
 			tld: 'tld',
 			countryCode: 'country_code',
@@ -73,7 +73,7 @@ const OPERATION_CONFIG: Record<string, OperationConfig> = {
 	googleNews: {
 		path: '/structured/google/news',
 		required: [{ field: 'sdeQuery', param: 'query' }],
-		collection: 'sdeGoogleOptions',
+		collection: 'sdeGoogleNewsOptions',
 		optional: {
 			tld: 'tld',
 			countryCode: 'country_code',
@@ -84,7 +84,7 @@ const OPERATION_CONFIG: Record<string, OperationConfig> = {
 	googleShopping: {
 		path: '/structured/google/shopping',
 		required: [{ field: 'sdeQuery', param: 'query' }],
-		collection: 'sdeGoogleOptions',
+		collection: 'sdeGoogleShoppingOptions',
 		optional: {
 			tld: 'tld',
 			countryCode: 'country_code',
@@ -95,7 +95,7 @@ const OPERATION_CONFIG: Record<string, OperationConfig> = {
 	googleMapsSearch: {
 		path: '/structured/google/mapssearch',
 		required: [{ field: 'sdeQuery', param: 'query' }],
-		collection: 'sdeGoogleOptions',
+		collection: 'sdeGoogleMapsSearchOptions',
 		optional: {
 			tld: 'tld',
 			countryCode: 'country_code',
@@ -108,7 +108,7 @@ const OPERATION_CONFIG: Record<string, OperationConfig> = {
 	ebaySearch: {
 		path: '/structured/ebay/search/v2',
 		required: [{ field: 'sdeQuery', param: 'query' }],
-		collection: 'sdeEbayOptions',
+		collection: 'sdeEbaySearchOptions',
 		optional: {
 			tld: 'tld',
 			countryCode: 'country_code',
@@ -125,7 +125,7 @@ const OPERATION_CONFIG: Record<string, OperationConfig> = {
 	ebayProduct: {
 		path: '/structured/ebay/product',
 		required: [{ field: 'sdeProductId', param: 'product_id' }],
-		collection: 'sdeEbayOptions',
+		collection: 'sdeEbayProductOptions',
 		optional: {
 			tld: 'tld',
 			countryCode: 'country_code',
@@ -135,7 +135,7 @@ const OPERATION_CONFIG: Record<string, OperationConfig> = {
 	walmartSearch: {
 		path: '/structured/walmart/search',
 		required: [{ field: 'sdeQuery', param: 'query' }],
-		collection: 'sdeWalmartOptions',
+		collection: 'sdeWalmartSearchOptions',
 		optional: {
 			tld: 'tld',
 			countryCode: 'country_code',
@@ -146,7 +146,7 @@ const OPERATION_CONFIG: Record<string, OperationConfig> = {
 	walmartCategory: {
 		path: '/structured/walmart/category',
 		required: [{ field: 'sdeCategory', param: 'category' }],
-		collection: 'sdeWalmartOptions',
+		collection: 'sdeWalmartSearchOptions',
 		optional: {
 			tld: 'tld',
 			countryCode: 'country_code',
@@ -157,7 +157,7 @@ const OPERATION_CONFIG: Record<string, OperationConfig> = {
 	walmartProduct: {
 		path: '/structured/walmart/product',
 		required: [{ field: 'sdeProductId', param: 'product_id' }],
-		collection: 'sdeWalmartOptions',
+		collection: 'sdeWalmartProductOptions',
 		optional: {
 			tld: 'tld',
 			countryCode: 'country_code',
@@ -167,7 +167,7 @@ const OPERATION_CONFIG: Record<string, OperationConfig> = {
 	walmartReview: {
 		path: '/structured/walmart/review',
 		required: [{ field: 'sdeProductId', param: 'product_id' }],
-		collection: 'sdeWalmartOptions',
+		collection: 'sdeWalmartReviewOptions',
 		optional: {
 			tld: 'tld',
 			countryCode: 'country_code',
@@ -181,7 +181,7 @@ const OPERATION_CONFIG: Record<string, OperationConfig> = {
 	redfinForSale: {
 		path: '/structured/redfin/forsale',
 		required: [{ field: 'sdeUrl', param: 'url' }],
-		collection: 'sdeRedfinOptions',
+		collection: 'sdeRedfinListingOptions',
 		optional: {
 			tld: 'tld',
 			countryCode: 'country_code',
@@ -191,7 +191,7 @@ const OPERATION_CONFIG: Record<string, OperationConfig> = {
 	redfinForRent: {
 		path: '/structured/redfin/forrent',
 		required: [{ field: 'sdeUrl', param: 'url' }],
-		collection: 'sdeRedfinOptions',
+		collection: 'sdeRedfinListingOptions',
 		optional: {
 			tld: 'tld',
 			countryCode: 'country_code',
@@ -201,7 +201,7 @@ const OPERATION_CONFIG: Record<string, OperationConfig> = {
 	redfinSearch: {
 		path: '/structured/redfin/search',
 		required: [{ field: 'sdeUrl', param: 'url' }],
-		collection: 'sdeRedfinOptions',
+		collection: 'sdeRedfinLookupOptions',
 		optional: {
 			tld: 'tld',
 			countryCode: 'country_code',
@@ -210,7 +210,7 @@ const OPERATION_CONFIG: Record<string, OperationConfig> = {
 	redfinAgent: {
 		path: '/structured/redfin/agent',
 		required: [{ field: 'sdeUrl', param: 'url' }],
-		collection: 'sdeRedfinOptions',
+		collection: 'sdeRedfinLookupOptions',
 		optional: {
 			tld: 'tld',
 			countryCode: 'country_code',

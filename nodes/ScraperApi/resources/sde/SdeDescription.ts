@@ -182,437 +182,238 @@ const requiredFields: INodeProperties[] = [
 	},
 ];
 
-// --- Optional parameter collections (one per platform) ---
+const tldField = (
+	options: Array<{ name: string; value: string }>,
+	platformLabel: string,
+): INodeProperties => ({
+	displayName: 'TLD',
+	name: 'tld',
+	type: 'options',
+	options,
+	default: 'com',
+	description: `${platformLabel} top-level domain`,
+});
 
-const amazonOptions: INodeProperties = {
+const countryCodeField: INodeProperties = {
+	displayName: 'Country Code',
+	name: 'countryCode',
+	type: 'string',
+	default: '',
+	description: 'Two-letter country code for geo-targeting',
+};
+
+const outputFormatField: INodeProperties = {
+	displayName: 'Output Format',
+	name: 'outputFormat',
+	type: 'options',
+	options: [
+		{ name: 'CSV', value: 'csv' },
+		{ name: 'JSON', value: 'json' },
+	],
+	default: 'json',
+	description: 'Output format for the response',
+};
+
+const includeHtmlField: INodeProperties = {
+	displayName: 'Include HTML',
+	name: 'includeHtml',
+	type: 'boolean',
+	default: false,
+	description: 'Whether to include raw HTML in the response',
+};
+
+const timePeriodField: INodeProperties = {
+	displayName: 'Time Period',
+	name: 'timePeriod',
+	type: 'options',
+	options: [
+		{ name: 'Past Day', value: 'qdr:d' },
+		{ name: 'Past Hour', value: 'qdr:h' },
+		{ name: 'Past Month', value: 'qdr:m' },
+		{ name: 'Past Week', value: 'qdr:w' },
+		{ name: 'Past Year', value: 'qdr:y' },
+	],
+	default: 'qdr:d',
+	description: 'Predefined time period filter',
+};
+
+const pageField: INodeProperties = {
+	displayName: 'Page',
+	name: 'page',
+	type: 'number',
+	default: 1,
+	description: 'Page number of results',
+};
+
+const amazonCommon: INodeProperties[] = [tldField(amazonTlds, 'Amazon'), countryCodeField, outputFormatField];
+const ebayCommon: INodeProperties[] = [tldField(ebayTlds, 'eBay'), countryCodeField, outputFormatField];
+const walmartCommon: INodeProperties[] = [tldField(walmartTlds, 'Walmart'), countryCodeField, outputFormatField];
+const googleBase: INodeProperties[] = [tldField(googleTlds, 'Google'), countryCodeField];
+const googleCommon: INodeProperties[] = [...googleBase, outputFormatField];
+const redfinCommon: INodeProperties[] = [tldField(redfinTlds, 'Redfin'), countryCodeField];
+
+// --- Operation-specific extra fields ---
+
+const amazonOffersExtras: INodeProperties[] = [
+	{ displayName: 'Condition', name: 'condition', type: 'string', default: '', description: 'Filter by item condition' },
+	{ displayName: 'Filter New', name: 'filterNew', type: 'boolean', default: false, description: 'Whether to filter for new items' },
+	{ displayName: 'Filter Used Acceptable', name: 'filterUsedAcceptable', type: 'boolean', default: false, description: 'Whether to filter for used - acceptable condition' },
+	{ displayName: 'Filter Used Good', name: 'filterUsedGood', type: 'boolean', default: false, description: 'Whether to filter for used - good condition' },
+	{ displayName: 'Filter Used Like New', name: 'filterUsedLikeNew', type: 'boolean', default: false, description: 'Whether to filter for used - like new condition' },
+	{ displayName: 'Filter Used Very Good', name: 'filterUsedVeryGood', type: 'boolean', default: false, description: 'Whether to filter for used - very good condition' },
+];
+
+const amazonSearchExtras: INodeProperties[] = [
+	{ displayName: 'Department (I)', name: 'department', type: 'string', default: '', description: 'Department/category filter' },
+	{ ...pageField, description: 'Page number of search results' },
+	{ displayName: 'Sort (S)', name: 'sort', type: 'string', default: '', description: 'Sort parameter for search results' },
+];
+
+const googleMapsSearchExtras: INodeProperties[] = [
+	{ displayName: 'Latitude', name: 'latitude', type: 'string', default: '', description: 'Latitude for location-based search' },
+	{ displayName: 'Longitude', name: 'longitude', type: 'string', default: '', description: 'Longitude for location-based search' },
+	{ displayName: 'Zoom', name: 'zoom', type: 'number', default: 14, description: 'Zoom level for the map search' },
+];
+
+const ebaySearchExtras: INodeProperties[] = [
+	{
+		displayName: 'Buying Format',
+		name: 'buyingFormat',
+		type: 'options',
+		options: [
+			{ name: 'Accepts Offers', value: 'accepts_offers' },
+			{ name: 'Auction', value: 'auction' },
+			{ name: 'Buy It Now', value: 'buy_it_now' },
+		],
+		default: 'buy_it_now',
+		description: 'Filter by buying format',
+	},
+	{
+		displayName: 'Condition',
+		name: 'condition',
+		type: 'options',
+		options: [
+			{ name: 'For Parts', value: 'for_parts' },
+			{ name: 'New', value: 'new' },
+			{ name: 'Not Working', value: 'not_working' },
+			{ name: 'Open Box', value: 'open_box' },
+			{ name: 'Refurbished', value: 'refurbished' },
+			{ name: 'Used', value: 'used' },
+		],
+		default: 'new',
+		description: 'Filter by item condition',
+	},
+	{
+		displayName: 'Items Per Page',
+		name: 'itemsPerPage',
+		type: 'options',
+		options: [
+			{ name: '60', value: 60 },
+			{ name: '120', value: 120 },
+			{ name: '240', value: 240 },
+		],
+		default: 60,
+		description: 'Number of items per page',
+	},
+	{ ...pageField, description: 'Page number of search results' },
+	{ displayName: 'Seller ID', name: 'sellerId', type: 'string', default: '', description: 'Filter by specific seller' },
+	{
+		displayName: 'Show Only',
+		name: 'showOnly',
+		type: 'string',
+		default: '',
+		description: 'Additional filters (comma-separated). Values: returns_accepted, authorized_seller, completed_items, sold_items, sale_items, listed_as_lots, search_in_description, benefits_charity, authenticity_guarantee.',
+	},
+	{
+		displayName: 'Sort By',
+		name: 'sortBy',
+		type: 'options',
+		options: [
+			{ name: 'Best Match', value: 'best_match' },
+			{ name: 'Distance Nearest', value: 'distance_nearest' },
+			{ name: 'Ending Soonest', value: 'ending_soonest' },
+			{ name: 'Newly Listed', value: 'newly_listed' },
+			{ name: 'Price Highest', value: 'price_highest' },
+			{ name: 'Price Lowest', value: 'price_lowest' },
+		],
+		default: 'best_match',
+		description: 'Sort order for search results',
+	},
+];
+
+const walmartReviewExtras: INodeProperties[] = [
+	{ displayName: 'Ratings', name: 'ratings', type: 'string', default: '', description: 'Filter by rating' },
+	{
+		displayName: 'Sort',
+		name: 'sort',
+		type: 'options',
+		options: [
+			{ name: 'Helpful', value: 'helpful' },
+			{ name: 'Newest', value: 'submission-desc' },
+			{ name: 'Oldest', value: 'submission-asc' },
+			{ name: 'Rating High to Low', value: 'rating-desc' },
+			{ name: 'Rating Low to High', value: 'rating-asc' },
+			{ name: 'Relevancy', value: 'relevancy' },
+		],
+		default: 'relevancy',
+		description: 'Sort order for reviews',
+	},
+	{ displayName: 'Verified Purchase', name: 'verifiedPurchase', type: 'boolean', default: false, description: 'Whether to filter for verified purchases only' },
+];
+
+const redfinListingExtras: INodeProperties[] = [
+	{ displayName: 'Raw', name: 'raw', type: 'boolean', default: false, description: 'Whether to return raw data' },
+];
+
+const buildCollection = (
+	name: string,
+	operations: string[],
+	options: INodeProperties[],
+): INodeProperties => ({
 	displayName: 'Optional Parameters',
-	name: 'sdeAmazonOptions',
+	name,
 	type: 'collection',
 	placeholder: 'Add Parameter',
 	default: {},
-	displayOptions: { show: { resource: ['sde'], sdePlatform: ['amazon'] } },
-	options: [
-		{
-			displayName: 'Condition',
-			name: 'condition',
-			type: 'string',
-			default: '',
-			description: 'Filter by item condition',
-			displayOptions: { show: { '/operation': ['amazonOffers'] } },
-		},
-		{
-			displayName: 'Country Code',
-			name: 'countryCode',
-			type: 'string',
-			default: '',
-			description: 'Two-letter country code for geo-targeting',
-		},
-		{
-			displayName: 'Department (I)',
-			name: 'department',
-			type: 'string',
-			default: '',
-			description: 'Department/category filter',
-			displayOptions: { show: { '/operation': ['amazonSearch'] } },
-		},
-		{
-			displayName: 'Filter New',
-			name: 'filterNew',
-			type: 'boolean',
-			default: false,
-			description: 'Whether to filter for new items',
-			displayOptions: { show: { '/operation': ['amazonOffers'] } },
-		},
-		{
-			displayName: 'Filter Used Acceptable',
-			name: 'filterUsedAcceptable',
-			type: 'boolean',
-			default: false,
-			description: 'Whether to filter for used - acceptable condition',
-			displayOptions: { show: { '/operation': ['amazonOffers'] } },
-		},
-		{
-			displayName: 'Filter Used Good',
-			name: 'filterUsedGood',
-			type: 'boolean',
-			default: false,
-			description: 'Whether to filter for used - good condition',
-			displayOptions: { show: { '/operation': ['amazonOffers'] } },
-		},
-		{
-			displayName: 'Filter Used Like New',
-			name: 'filterUsedLikeNew',
-			type: 'boolean',
-			default: false,
-			description: 'Whether to filter for used - like new condition',
-			displayOptions: { show: { '/operation': ['amazonOffers'] } },
-		},
-		{
-			displayName: 'Filter Used Very Good',
-			name: 'filterUsedVeryGood',
-			type: 'boolean',
-			default: false,
-			description: 'Whether to filter for used - very good condition',
-			displayOptions: { show: { '/operation': ['amazonOffers'] } },
-		},
-		{
-			displayName: 'Output Format',
-			name: 'outputFormat',
-			type: 'options',
-			options: [
-				{ name: 'CSV', value: 'csv' },
-				{ name: 'JSON', value: 'json' },
-			],
-			default: 'json',
-			description: 'Output format for the response',
-		},
-		{
-			displayName: 'Page',
-			name: 'page',
-			type: 'number',
-			default: 1,
-			description: 'Page number of search results',
-			displayOptions: { show: { '/operation': ['amazonSearch'] } },
-		},
-		{
-			displayName: 'Sort (S)',
-			name: 'sort',
-			type: 'string',
-			default: '',
-			description: 'Sort parameter for search results',
-			displayOptions: { show: { '/operation': ['amazonSearch'] } },
-		},
-		{
-			displayName: 'TLD',
-			name: 'tld',
-			type: 'options',
-			options: amazonTlds,
-			default: 'com',
-			description: 'Amazon top-level domain',
-		},
-	],
-};
+	displayOptions: { show: { resource: ['sde'], operation: operations } },
+	options,
+});
 
-const googleOptions: INodeProperties = {
-	displayName: 'Optional Parameters',
-	name: 'sdeGoogleOptions',
-	type: 'collection',
-	placeholder: 'Add Parameter',
-	default: {},
-	displayOptions: { show: { resource: ['sde'], sdePlatform: ['google'] } },
-	options: [
-		{
-			displayName: 'Country Code',
-			name: 'countryCode',
-			type: 'string',
-			default: '',
-			description: 'Two-letter country code for geo-targeting',
-		},
-		{
-			displayName: 'Include HTML',
-			name: 'includeHtml',
-			type: 'boolean',
-			default: false,
-			description: 'Whether to include raw HTML in the response',
-			displayOptions: { show: { '/operation': ['googleSearch', 'googleShopping', 'googleMapsSearch'] } },
-		},
-		{
-			displayName: 'Latitude',
-			name: 'latitude',
-			type: 'string',
-			default: '',
-			description: 'Latitude for location-based search',
-			displayOptions: { show: { '/operation': ['googleMapsSearch'] } },
-		},
-		{
-			displayName: 'Longitude',
-			name: 'longitude',
-			type: 'string',
-			default: '',
-			description: 'Longitude for location-based search',
-			displayOptions: { show: { '/operation': ['googleMapsSearch'] } },
-		},
-		{
-			displayName: 'Output Format',
-			name: 'outputFormat',
-			type: 'options',
-			options: [
-				{ name: 'CSV', value: 'csv' },
-				{ name: 'JSON', value: 'json' },
-			],
-			default: 'json',
-			description: 'Output format for the response',
-			displayOptions: { show: { '/operation': ['googleSearch', 'googleJobs', 'googleNews', 'googleShopping'] } },
-		},
-		{
-			displayName: 'Time Period',
-			name: 'timePeriod',
-			type: 'options',
-			options: [
-				{ name: 'Past Day', value: 'qdr:d' },
-				{ name: 'Past Hour', value: 'qdr:h' },
-				{ name: 'Past Month', value: 'qdr:m' },
-				{ name: 'Past Week', value: 'qdr:w' },
-				{ name: 'Past Year', value: 'qdr:y' },
-			],
-			default: 'qdr:d',
-			description: 'Predefined time period filter',
-			displayOptions: { show: { '/operation': ['googleSearch', 'googleNews'] } },
-		},
-		{
-			displayName: 'TLD',
-			name: 'tld',
-			type: 'options',
-			options: googleTlds,
-			default: 'com',
-			description: 'Google top-level domain',
-		},
-		{
-			displayName: 'Zoom',
-			name: 'zoom',
-			type: 'number',
-			default: 14,
-			description: 'Zoom level for the map search',
-			displayOptions: { show: { '/operation': ['googleMapsSearch'] } },
-		},
-	],
-};
+const sdeAmazonProductOptions = buildCollection('sdeAmazonProductOptions', ['amazonProduct'], amazonCommon);
+const sdeAmazonOffersOptions = buildCollection('sdeAmazonOffersOptions', ['amazonOffers'], [...amazonCommon, ...amazonOffersExtras]);
+const sdeAmazonSearchOptions = buildCollection('sdeAmazonSearchOptions', ['amazonSearch'], [...amazonCommon, ...amazonSearchExtras]);
 
-const ebayOptions: INodeProperties = {
-	displayName: 'Optional Parameters',
-	name: 'sdeEbayOptions',
-	type: 'collection',
-	placeholder: 'Add Parameter',
-	default: {},
-	displayOptions: { show: { resource: ['sde'], sdePlatform: ['ebay'] } },
-	options: [
-		{
-			displayName: 'Buying Format',
-			name: 'buyingFormat',
-			type: 'options',
-			options: [
-				{ name: 'Accepts Offers', value: 'accepts_offers' },
-				{ name: 'Auction', value: 'auction' },
-				{ name: 'Buy It Now', value: 'buy_it_now' },
-			],
-			default: 'buy_it_now',
-			description: 'Filter by buying format',
-			displayOptions: { show: { '/operation': ['ebaySearch'] } },
-		},
-		{
-			displayName: 'Condition',
-			name: 'condition',
-			type: 'options',
-			options: [
-				{ name: 'For Parts', value: 'for_parts' },
-				{ name: 'New', value: 'new' },
-				{ name: 'Not Working', value: 'not_working' },
-				{ name: 'Open Box', value: 'open_box' },
-				{ name: 'Refurbished', value: 'refurbished' },
-				{ name: 'Used', value: 'used' },
-			],
-			default: 'new',
-			description: 'Filter by item condition',
-			displayOptions: { show: { '/operation': ['ebaySearch'] } },
-		},
-		{
-			displayName: 'Country Code',
-			name: 'countryCode',
-			type: 'string',
-			default: '',
-			description: 'Two-letter country code for geo-targeting',
-		},
-		{
-			displayName: 'Items Per Page',
-			name: 'itemsPerPage',
-			type: 'options',
-			options: [
-				{ name: '60', value: 60 },
-				{ name: '120', value: 120 },
-				{ name: '240', value: 240 },
-			],
-			default: 60,
-			description: 'Number of items per page',
-			displayOptions: { show: { '/operation': ['ebaySearch'] } },
-		},
-		{
-			displayName: 'Output Format',
-			name: 'outputFormat',
-			type: 'options',
-			options: [
-				{ name: 'CSV', value: 'csv' },
-				{ name: 'JSON', value: 'json' },
-			],
-			default: 'json',
-			description: 'Output format for the response',
-		},
-		{
-			displayName: 'Page',
-			name: 'page',
-			type: 'number',
-			default: 1,
-			description: 'Page number of search results',
-			displayOptions: { show: { '/operation': ['ebaySearch'] } },
-		},
-		{
-			displayName: 'Seller ID',
-			name: 'sellerId',
-			type: 'string',
-			default: '',
-			description: 'Filter by specific seller',
-			displayOptions: { show: { '/operation': ['ebaySearch'] } },
-		},
-		{
-			displayName: 'Show Only',
-			name: 'showOnly',
-			type: 'string',
-			default: '',
-			description: 'Additional filters (comma-separated). Values: returns_accepted, authorized_seller, completed_items, sold_items, sale_items, listed_as_lots, search_in_description, benefits_charity, authenticity_guarantee.',
-			displayOptions: { show: { '/operation': ['ebaySearch'] } },
-		},
-		{
-			displayName: 'Sort By',
-			name: 'sortBy',
-			type: 'options',
-			options: [
-				{ name: 'Best Match', value: 'best_match' },
-				{ name: 'Distance Nearest', value: 'distance_nearest' },
-				{ name: 'Ending Soonest', value: 'ending_soonest' },
-				{ name: 'Newly Listed', value: 'newly_listed' },
-				{ name: 'Price Highest', value: 'price_highest' },
-				{ name: 'Price Lowest', value: 'price_lowest' },
-			],
-			default: 'best_match',
-			description: 'Sort order for search results',
-			displayOptions: { show: { '/operation': ['ebaySearch'] } },
-		},
-		{
-			displayName: 'TLD',
-			name: 'tld',
-			type: 'options',
-			options: ebayTlds,
-			default: 'com',
-			description: 'EBay top-level domain',
-		},
-	],
-};
+const sdeGoogleSearchOptions = buildCollection('sdeGoogleSearchOptions', ['googleSearch'], [...googleCommon, includeHtmlField, timePeriodField]);
+const sdeGoogleShoppingOptions = buildCollection('sdeGoogleShoppingOptions', ['googleShopping'], [...googleCommon, includeHtmlField]);
+const sdeGoogleNewsOptions = buildCollection('sdeGoogleNewsOptions', ['googleNews'], [...googleCommon, timePeriodField]);
+const sdeGoogleJobsOptions = buildCollection('sdeGoogleJobsOptions', ['googleJobs'], googleCommon);
+const sdeGoogleMapsSearchOptions = buildCollection('sdeGoogleMapsSearchOptions', ['googleMapsSearch'], [...googleBase, includeHtmlField, ...googleMapsSearchExtras]);
 
-const walmartOptions: INodeProperties = {
-	displayName: 'Optional Parameters',
-	name: 'sdeWalmartOptions',
-	type: 'collection',
-	placeholder: 'Add Parameter',
-	default: {},
-	displayOptions: { show: { resource: ['sde'], sdePlatform: ['walmart'] } },
-	options: [
-		{
-			displayName: 'Country Code',
-			name: 'countryCode',
-			type: 'string',
-			default: '',
-			description: 'Two-letter country code for geo-targeting',
-		},
-		{
-			displayName: 'Output Format',
-			name: 'outputFormat',
-			type: 'options',
-			options: [
-				{ name: 'CSV', value: 'csv' },
-				{ name: 'JSON', value: 'json' },
-			],
-			default: 'json',
-			description: 'Output format for the response',
-		},
-		{
-			displayName: 'Page',
-			name: 'page',
-			type: 'number',
-			default: 1,
-			description: 'Page number of results',
-			displayOptions: { show: { '/operation': ['walmartSearch', 'walmartCategory', 'walmartReview'] } },
-		},
-		{
-			displayName: 'Ratings',
-			name: 'ratings',
-			type: 'string',
-			default: '',
-			description: 'Filter by rating',
-			displayOptions: { show: { '/operation': ['walmartReview'] } },
-		},
-		{
-			displayName: 'Sort',
-			name: 'sort',
-			type: 'options',
-			options: [
-				{ name: 'Helpful', value: 'helpful' },
-				{ name: 'Newest', value: 'submission-desc' },
-				{ name: 'Oldest', value: 'submission-asc' },
-				{ name: 'Rating High to Low', value: 'rating-desc' },
-				{ name: 'Rating Low to High', value: 'rating-asc' },
-				{ name: 'Relevancy', value: 'relevancy' },
-			],
-			default: 'relevancy',
-			description: 'Sort order for reviews',
-			displayOptions: { show: { '/operation': ['walmartReview'] } },
-		},
-		{
-			displayName: 'TLD',
-			name: 'tld',
-			type: 'options',
-			options: walmartTlds,
-			default: 'com',
-			description: 'Walmart top-level domain',
-		},
-		{
-			displayName: 'Verified Purchase',
-			name: 'verifiedPurchase',
-			type: 'boolean',
-			default: false,
-			description: 'Whether to filter for verified purchases only',
-			displayOptions: { show: { '/operation': ['walmartReview'] } },
-		},
-	],
-};
+const sdeEbayProductOptions = buildCollection('sdeEbayProductOptions', ['ebayProduct'], ebayCommon);
+const sdeEbaySearchOptions = buildCollection('sdeEbaySearchOptions', ['ebaySearch'], [...ebayCommon, ...ebaySearchExtras]);
 
-const redfinOptions: INodeProperties = {
-	displayName: 'Optional Parameters',
-	name: 'sdeRedfinOptions',
-	type: 'collection',
-	placeholder: 'Add Parameter',
-	default: {},
-	displayOptions: { show: { resource: ['sde'], sdePlatform: ['redfin'] } },
-	options: [
-		{
-			displayName: 'Country Code',
-			name: 'countryCode',
-			type: 'string',
-			default: '',
-			description: 'Two-letter country code for geo-targeting',
-		},
-		{
-			displayName: 'Raw',
-			name: 'raw',
-			type: 'boolean',
-			default: false,
-			description: 'Whether to return raw data',
-			displayOptions: { show: { '/operation': ['redfinForSale', 'redfinForRent'] } },
-		},
-		{
-			displayName: 'TLD',
-			name: 'tld',
-			type: 'options',
-			options: redfinTlds,
-			default: 'com',
-			description: 'Redfin top-level domain',
-		},
-	],
-};
+const sdeWalmartProductOptions = buildCollection('sdeWalmartProductOptions', ['walmartProduct'], walmartCommon);
+const sdeWalmartSearchOptions = buildCollection('sdeWalmartSearchOptions', ['walmartSearch', 'walmartCategory'], [...walmartCommon, pageField]);
+const sdeWalmartReviewOptions = buildCollection('sdeWalmartReviewOptions', ['walmartReview'], [...walmartCommon, pageField, ...walmartReviewExtras]);
+
+const sdeRedfinListingOptions = buildCollection('sdeRedfinListingOptions', ['redfinForSale', 'redfinForRent'], [...redfinCommon, ...redfinListingExtras]);
+const sdeRedfinLookupOptions = buildCollection('sdeRedfinLookupOptions', ['redfinSearch', 'redfinAgent'], redfinCommon);
 
 export const SdeFields: INodeProperties[] = [
 	...requiredFields,
-	amazonOptions,
-	googleOptions,
-	ebayOptions,
-	walmartOptions,
-	redfinOptions,
+	sdeAmazonProductOptions,
+	sdeAmazonOffersOptions,
+	sdeAmazonSearchOptions,
+	sdeGoogleSearchOptions,
+	sdeGoogleShoppingOptions,
+	sdeGoogleNewsOptions,
+	sdeGoogleJobsOptions,
+	sdeGoogleMapsSearchOptions,
+	sdeEbayProductOptions,
+	sdeEbaySearchOptions,
+	sdeWalmartProductOptions,
+	sdeWalmartSearchOptions,
+	sdeWalmartReviewOptions,
+	sdeRedfinListingOptions,
+	sdeRedfinLookupOptions,
 ];

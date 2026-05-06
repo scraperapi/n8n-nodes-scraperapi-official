@@ -19,7 +19,7 @@ export class ScraperApi implements INodeType {
 		icon: 'file:../../icons/ScraperApi.svg',
 		group: ['transform'],
 		version: 1,
-		subtitle: '={{ $parameter["operation"] + ": " + $parameter["resource"] }}',
+		subtitle: '={{ $parameter["resource"] === "sde" ? ($parameter["operation"] || "").replace(/([A-Z])/g, " $1").trim() : $parameter["operation"] + ": " + $parameter["resource"] }}',
 		description: 'Official ScraperAPI nodes for n8n',
 		defaults: {
 			name: 'ScraperAPI',
