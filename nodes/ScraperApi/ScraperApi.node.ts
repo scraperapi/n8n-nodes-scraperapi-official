@@ -3,9 +3,8 @@ import type {
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
-	JsonObject,
 } from 'n8n-workflow';
-import { NodeApiError, NodeConnectionTypes, NodeOperationError } from 'n8n-workflow';
+import { NodeConnectionTypes, NodeOperationError } from 'n8n-workflow';
 import { ApiResource } from './resources/api/ApiResource';
 import { ApiOperations, ApiFields } from './resources/api/ApiDescription';
 import { CrawlerResource } from './resources/crawler/CrawlerResource';
@@ -71,43 +70,40 @@ export class ScraperApi implements INodeType {
 			sde: SdeResource,
 		} as const;
 
+		const ResourceClass = resourceMap[resource as keyof typeof resourceMap];
+		if (!ResourceClass) {
+			throw new NodeOperationError(this.getNode(), `Unknown resource type: ${resource}`);
+		}
+
+		const executeOne = async (i: number): Promise<INodeExecutionData> => {
+			const resourceInstance = new ResourceClass(this);
+			const response = await resourceInstance.executeRequest(i);
+			return {
+				json: {
+					resource,
+					response: {
+						body: response.body,
+						headers: response.headers,
+						statusCode: response.statusCode,
+						statusMessage: response.statusMessage,
+					},
+				},
+				pairedItem: { item: i },
+			};
+		};
+
 		for (let i = 0; i < items.length; i++) {
-			try {
-				const ResourceClass = resourceMap[resource as keyof typeof resourceMap];
-				if (!ResourceClass) {
-					throw new NodeOperationError(this.getNode(), `Unknown resource type: ${resource}`);
-				}
-
-				const resourceInstance = new ResourceClass(this);
-				const response = await resourceInstance.executeRequest(i);
-
-				returnData.push({
-					json: {
-						resource,
-						response: {
-							body: response.body,
-							headers: response.headers,
-							statusCode: response.statusCode,
-							statusMessage: response.statusMessage,
-						},
-					},
-					pairedItem: {
-						item: i,
-					},
-				});
-			} catch (error) {
-				if (this.continueOnFail()) {
+			if (this.continueOnFail()) {
+				try {
+					returnData.push(await executeOne(i));
+				} catch (error) {
 					returnData.push({
-						json: {
-							error: error.message,
-						},
-						pairedItem: {
-							item: i,
-						},
+						json: { error: error.message },
+						pairedItem: { item: i },
 					});
-					continue;
 				}
-				throw new NodeApiError(this.getNode(), error as JsonObject, { itemIndex: i });
+			} else {
+				returnData.push(await executeOne(i));
 			}
 		}
 
