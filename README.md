@@ -459,6 +459,9 @@ Get real estate agent information from Redfin.
 - **0.2.0**: Replace device_type options field with desktopDevice and mobileDevice boolean fields to support AI model auto-definition.
 - **1.0.0**: output_format and autoparse parameters supported.
 - **1.1.0**: Crawler resource: initiate crawler jobs, get job status, and cancel jobs.
+- **1.2.0**: Structured Data Endpoints (SDEs) resource for Amazon, Google, Walmart, eBay, and Redfin.
+- **1.2.1**: Refactor SDE optional parameters into per-operation collections to satisfy the n8n community node validator.
+- **1.2.2**: Publish via GitHub Actions with npm provenance attestation; bump `@n8n/node-cli` to `^0.29.1`.
 
 ## More ScraperAPI Integrations
 

@@ -3,8 +3,9 @@ import type {
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
+	JsonObject,
 } from 'n8n-workflow';
-import { NodeConnectionTypes, NodeOperationError } from 'n8n-workflow';
+import { NodeApiError, NodeConnectionTypes, NodeOperationError } from 'n8n-workflow';
 import { ApiResource } from './resources/api/ApiResource';
 import { ApiOperations, ApiFields } from './resources/api/ApiDescription';
 import { CrawlerResource } from './resources/crawler/CrawlerResource';
@@ -106,7 +107,7 @@ export class ScraperApi implements INodeType {
 					});
 					continue;
 				}
-				throw error;
+				throw new NodeApiError(this.getNode(), error as JsonObject, { itemIndex: i });
 			}
 		}
 
