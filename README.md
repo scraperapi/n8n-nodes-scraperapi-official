@@ -461,7 +461,7 @@ Get real estate agent information from Redfin.
 - **1.1.0**: Crawler resource: initiate crawler jobs, get job status, and cancel jobs.
 - **1.2.0**: Structured Data Endpoints (SDEs) resource for Amazon, Google, Walmart, eBay, and Redfin.
 - **1.2.1**: Refactor SDE optional parameters into per-operation collections to satisfy the n8n community node validator.
-- **1.2.2**: Publish via GitHub Actions with npm provenance attestation; bump `@n8n/node-cli` to `^0.29.1`.
+- **1.2.2**: Publish via GitHub Actions with npm provenance attestation; bump `@n8n/node-cli` to `^0.29.1`; preserve original error types (e.g. `NodeOperationError`) when `continueOnFail` is off.
 
 ## More ScraperAPI Integrations
 
