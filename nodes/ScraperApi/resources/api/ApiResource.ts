@@ -23,6 +23,7 @@ export class ApiResource {
 			apiMobileDevice?: boolean;
 			apiOutputFormat?: 'markdown' | 'text' | 'csv' | 'json';
 			apiAutoparse?: boolean;
+			apiZipCode?: string;
 		};
 
 		const apiParams: ApiParameters = {
@@ -57,6 +58,10 @@ export class ApiResource {
 
 		if (optionalParameters.apiAutoparse !== undefined) {
 			apiParams.autoparse = optionalParameters.apiAutoparse;
+		}
+
+		if (optionalParameters.apiZipCode) {
+			apiParams.zip = optionalParameters.apiZipCode;
 		}
 
 		return apiParams;
@@ -94,6 +99,10 @@ export class ApiResource {
 
 		if (params.device_type) {
 			qs.device_type = params.device_type;
+		}
+
+		if (params.zip) {
+			qs.zip = params.zip;
 		}
 
 		const requestOptions: IHttpRequestOptions = {

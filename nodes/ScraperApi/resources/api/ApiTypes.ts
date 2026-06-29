@@ -7,6 +7,7 @@ export interface ApiParameters {
     render?: boolean;
     output_format?: 'markdown' | 'text' | 'csv' | 'json' | 'html';
     autoparse?: boolean;
+    zip?: string;
 }
 
 export interface ApiResponse {

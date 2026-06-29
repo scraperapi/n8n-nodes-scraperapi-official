@@ -127,6 +127,7 @@ The **API** resource allows you to scrape any website using ScraperAPI's endpoin
 | `autoparse` | boolean | Enable automatic parsing for select websites (default: `false`) | No |
 | `premium` | boolean | Use premium residential/mobile proxies for higher success rates (incompatible with `ultraPremium`) | No |
 | `ultraPremium` | boolean | Activate advanced bypass mechanisms for the most difficult websites (incompatible with `premium`) | No |
+| `zipCode` | string | US ZIP code for Amazon location-specific results (Amazon US only, e.g., `92223`) | No |
 
 </details>
 

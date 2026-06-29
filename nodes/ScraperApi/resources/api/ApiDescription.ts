@@ -103,6 +103,13 @@ const apiParameters: INodeProperties[] = [
                 default: false,
                 description: 'Whether to activate advanced bypass mechanisms (Can not be combined with Premium)',
             },
+            {
+                displayName: 'ZIP Code',
+                name: 'apiZipCode',
+                type: 'string',
+                default: '',
+                description: 'US ZIP code for Amazon location-specific results (Amazon US only, e.g. 92223)',
+            },
         ],
     },
 ];
