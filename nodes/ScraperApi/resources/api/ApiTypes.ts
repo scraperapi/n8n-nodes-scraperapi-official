@@ -8,6 +8,10 @@ export interface ApiParameters {
     output_format?: 'markdown' | 'text' | 'csv' | 'json' | 'html';
     autoparse?: boolean;
     zip?: string;
+    session_number?: number;
+    keep_headers?: boolean;
+    follow_redirect?: boolean;
+    retry_404?: boolean;
 }
 
 export interface ApiResponse {

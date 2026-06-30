@@ -24,6 +24,10 @@ export class ApiResource {
 			apiOutputFormat?: 'markdown' | 'text' | 'csv' | 'json';
 			apiAutoparse?: boolean;
 			apiZipCode?: string;
+			apiSessionNumber?: number;
+			apiKeepHeaders?: boolean;
+			apiFollowRedirect?: boolean;
+			apiRetry404?: boolean;
 		};
 
 		const apiParams: ApiParameters = {
@@ -62,6 +66,22 @@ export class ApiResource {
 
 		if (optionalParameters.apiZipCode) {
 			apiParams.zip = optionalParameters.apiZipCode;
+		}
+
+		if (optionalParameters.apiSessionNumber != null && optionalParameters.apiSessionNumber > 0) {
+			apiParams.session_number = optionalParameters.apiSessionNumber;
+		}
+
+		if (optionalParameters.apiKeepHeaders !== undefined) {
+			apiParams.keep_headers = optionalParameters.apiKeepHeaders;
+		}
+
+		if (optionalParameters.apiFollowRedirect !== undefined) {
+			apiParams.follow_redirect = optionalParameters.apiFollowRedirect;
+		}
+
+		if (optionalParameters.apiRetry404 !== undefined) {
+			apiParams.retry_404 = optionalParameters.apiRetry404;
 		}
 
 		return apiParams;
@@ -103,6 +123,22 @@ export class ApiResource {
 
 		if (params.zip) {
 			qs.zip = params.zip;
+		}
+
+		if (params.session_number) {
+			qs.session_number = params.session_number;
+		}
+
+		if (params.keep_headers !== undefined) {
+			qs.keep_headers = params.keep_headers;
+		}
+
+		if (params.follow_redirect !== undefined) {
+			qs.follow_redirect = params.follow_redirect;
+		}
+
+		if (params.retry_404 !== undefined) {
+			qs.retry_404 = params.retry_404;
 		}
 
 		const requestOptions: IHttpRequestOptions = {

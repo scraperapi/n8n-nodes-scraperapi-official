@@ -136,6 +136,10 @@ The **API** resource allows you to scrape any website using ScraperAPI's endpoin
 | `premium` | boolean | Use premium residential/mobile proxies for higher success rates (incompatible with `ultraPremium`) | No |
 | `ultraPremium` | boolean | Activate advanced bypass mechanisms for the most difficult websites (incompatible with `premium`) | No |
 | `zipCode` | string | US ZIP code for Amazon location-specific results (Amazon US only, e.g., `92223`) | No |
+| `sessionNumber` | number | Reuse the same proxy session by passing an integer (incompatible with `premium`/`ultraPremium`) | No |
+| `keepHeaders` | boolean | Keep the original response headers (not available with `ultraPremium`) | No |
+| `followRedirect` | boolean | Follow HTTP redirects when fetching the page (default: `true`) | No |
+| `retry404` | boolean | Retry requests that return a 404 status code (not available with `premium`/`ultraPremium`) | No |
 
 </details>
 
@@ -270,13 +274,14 @@ The optional `scraperParams` collection (available on **Create a Parser** and **
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `countryCode` | string | Two-letter country code for geo-specific scraping (e.g. `us`, `gb`, `de`) |
-| `deviceType` | string | Scrape as a `desktop` or `mobile` device |
-| `followRedirect` | boolean | Whether to follow HTTP redirects |
-| `keepHeaders` | boolean | Whether to keep the original response headers |
+| `desktopDevice` | boolean | Scrape the page as a desktop device |
+| `followRedirect` | boolean | Follow HTTP redirects when fetching the page (default: `true`) |
+| `keepHeaders` | boolean | Keep the original response headers (not available with `ultraPremium`) |
+| `mobileDevice` | boolean | Scrape the page as a mobile device |
 | `premium` | boolean | Use premium residential/mobile proxies (incompatible with `ultraPremium`) |
 | `render` | boolean | Enable JavaScript rendering for dynamic content |
-| `retry404` | boolean | Whether to retry requests that return a 404 status code |
-| `sessionNumber` | number | Reuse the same proxy session by passing an integer |
+| `retry404` | boolean | Retry requests that return a 404 status code (not available with `premium`/`ultraPremium`) |
+| `sessionNumber` | number | Reuse the same proxy session by passing an integer (incompatible with `premium`/`ultraPremium`) |
 | `ultraPremium` | boolean | Activate advanced bypass mechanisms (incompatible with `premium`) |
 
 ### Structured Data Endpoints (SDEs)

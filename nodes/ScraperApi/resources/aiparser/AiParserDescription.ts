@@ -102,15 +102,11 @@ const aiParserScraperParameters: INodeProperties = {
             description: 'Two-letter country code for geo-specific scraping (e.g. us, gb, de)',
         },
         {
-            displayName: 'Device Type',
-            name: 'device_type',
-            type: 'options',
-            options: [
-                { name: 'Desktop', value: 'desktop' },
-                { name: 'Mobile', value: 'mobile' },
-            ],
-            default: 'desktop',
-            description: 'Whether to scrape the page as a desktop or mobile device',
+            displayName: 'Desktop Device',
+            name: 'desktop_device',
+            type: 'boolean',
+            default: false,
+            description: 'Whether to scrape the page as a desktop device',
         },
         {
             displayName: 'Follow Redirect',
@@ -124,7 +120,14 @@ const aiParserScraperParameters: INodeProperties = {
             name: 'keep_headers',
             type: 'boolean',
             default: false,
-            description: 'Whether to keep the original response headers',
+            description: 'Whether to keep the original response headers (not available with Ultra Premium)',
+        },
+        {
+            displayName: 'Mobile Device',
+            name: 'mobile_device',
+            type: 'boolean',
+            default: false,
+            description: 'Whether to scrape the page as a mobile device',
         },
         {
             displayName: 'Premium',
@@ -145,14 +148,14 @@ const aiParserScraperParameters: INodeProperties = {
             name: 'retry_404',
             type: 'boolean',
             default: false,
-            description: 'Whether to retry requests that return a 404 status code',
+            description: 'Whether to retry requests that return a 404 status code (not available with Premium or Ultra Premium)',
         },
         {
             displayName: 'Session Number',
             name: 'session_number',
             type: 'number',
             default: 0,
-            description: 'Reuse the same proxy session by passing an integer. Sessions persist for up to 60 seconds.',
+            description: 'Reuse the same proxy session by passing an integer (not available with Premium or Ultra Premium)',
         },
         {
             displayName: 'Ultra Premium',

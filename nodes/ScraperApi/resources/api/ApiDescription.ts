@@ -62,6 +62,20 @@ const apiParameters: INodeProperties[] = [
                 description: 'Whether to scrape the page as a desktop device',
             },
             {
+                displayName: 'Follow Redirect',
+                name: 'apiFollowRedirect',
+                type: 'boolean',
+                default: true,
+                description: 'Whether to follow HTTP redirects when fetching the page',
+            },
+            {
+                displayName: 'Keep Headers',
+                name: 'apiKeepHeaders',
+                type: 'boolean',
+                default: false,
+                description: 'Whether to keep the original response headers (not available with Ultra Premium)',
+            },
+            {
                 displayName: 'Mobile Device',
                 name: 'apiMobileDevice',
                 type: 'boolean',
@@ -95,6 +109,20 @@ const apiParameters: INodeProperties[] = [
                 type: 'boolean',
                 default: false,
                 description: 'Whether to enable JavaScript rendering only when needed for dynamic content',
+            },
+            {
+                displayName: 'Retry 404',
+                name: 'apiRetry404',
+                type: 'boolean',
+                default: false,
+                description: 'Whether to retry requests that return a 404 status code (not available with Premium or Ultra Premium)',
+            },
+            {
+                displayName: 'Session Number',
+                name: 'apiSessionNumber',
+                type: 'number',
+                default: 0,
+                description: 'Reuse the same proxy session by passing an integer (not available with Premium or Ultra Premium)',
             },
             {
                 displayName: 'Ultra Premium',

@@ -16,7 +16,8 @@ interface ScraperParamCollection {
     premium?: boolean;
     session_number?: number;
     keep_headers?: boolean;
-    device_type?: 'desktop' | 'mobile';
+    desktop_device?: boolean;
+    mobile_device?: boolean;
     ultra_premium?: boolean;
     follow_redirect?: boolean;
     retry_404?: boolean;
@@ -81,8 +82,10 @@ export class AiParserResource {
         if (raw.keep_headers !== undefined) {
             scraperParams.keep_headers = raw.keep_headers;
         }
-        if (raw.device_type) {
-            scraperParams.device_type = raw.device_type;
+        if (raw.mobile_device) {
+            scraperParams.device_type = 'mobile';
+        } else if (raw.desktop_device) {
+            scraperParams.device_type = 'desktop';
         }
         if (raw.ultra_premium !== undefined) {
             scraperParams.ultra_premium = raw.ultra_premium;
