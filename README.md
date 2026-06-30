@@ -33,8 +33,6 @@ This is an n8n community node that lets you use **ScraperAPI** in your n8n workf
       - Product
       - Search
       - Offers
-      - Review
-      - Prices
     - Google
       - Search
       - Jobs
@@ -300,8 +298,7 @@ Extract detailed product information from Amazon.
 | `asin` | string | The Amazon Standard Identification Number (e.g., `B08N5WRWNW`) | Yes |
 | `tld` | string | Amazon top-level domain (e.g., `com`, `co.uk`, `de`) | No |
 | `countryCode` | string | Two-letter country code for geo-targeting | No |
-| `includeHtml` | boolean | Whether to include raw HTML in the response | No |
-| `language` | string | Language code for the response | No |
+| `outputFormat` | string | Output format: `'json'` (default) or `'csv'` | No |
 
 #### Amazon Search
 
@@ -312,10 +309,10 @@ Search for products on Amazon.
 | `query` | string | Search query (e.g., `laptop`) | Yes |
 | `tld` | string | Amazon top-level domain | No |
 | `countryCode` | string | Two-letter country code for geo-targeting | No |
+| `outputFormat` | string | Output format: `'json'` (default) or `'csv'` | No |
 | `page` | number | Page number of search results | No |
 | `sort` | string | Sort parameter | No |
-| `category` | string | Department/category filter | No |
-| `language` | string | Language code for the response | No |
+| `department` | string | Department/category filter | No |
 
 #### Amazon Offers
 
@@ -326,36 +323,13 @@ Get all offers (sellers) for a specific Amazon product.
 | `asin` | string | The Amazon Standard Identification Number | Yes |
 | `tld` | string | Amazon top-level domain | No |
 | `countryCode` | string | Two-letter country code for geo-targeting | No |
+| `outputFormat` | string | Output format: `'json'` (default) or `'csv'` | No |
 | `condition` | string | Filter by item condition | No |
 | `filterNew` | boolean | Filter for new items | No |
 | `filterUsedGood` | boolean | Filter for used - good condition | No |
 | `filterUsedLikeNew` | boolean | Filter for used - like new condition | No |
 | `filterUsedVeryGood` | boolean | Filter for used - very good condition | No |
 | `filterUsedAcceptable` | boolean | Filter for used - acceptable condition | No |
-
-#### Amazon Review
-
-Get customer reviews for an Amazon product.
-
-| Parameter | Type | Description | Required |
-|-----------|------|-------------|----------|
-| `asin` | string | The Amazon Standard Identification Number | Yes |
-| `tld` | string | Amazon top-level domain | No |
-| `countryCode` | string | Two-letter country code for geo-targeting | No |
-| `filterByStar` | string | Filter reviews by star rating | No |
-| `reviewerType` | string | Filter by reviewer type | No |
-| `pageNumber` | number | Page number of reviews | No |
-| `sortBy` | string | Sort order for reviews | No |
-
-#### Amazon Prices
-
-Get pricing information for multiple Amazon products at once.
-
-| Parameter | Type | Description | Required |
-|-----------|------|-------------|----------|
-| `asins` | string | Comma-separated list of ASINs (max 8) | Yes |
-| `tld` | string | Amazon top-level domain | No |
-| `countryCode` | string | Two-letter country code for geo-targeting | No |
 
 </details>
 
@@ -371,9 +345,8 @@ Get Google search results.
 | `query` | string | Search query | Yes |
 | `tld` | string | Google top-level domain (e.g., `com`, `co.uk`) | No |
 | `countryCode` | string | Two-letter country code for geo-targeting | No |
-| `dateRangeStart` | string | Start date for date-range filtering | No |
-| `dateRangeEnd` | string | End date for date-range filtering | No |
-| `timePeriod` | string | Predefined time period filter | No |
+| `outputFormat` | string | Output format: `'json'` (default) or `'csv'` | No |
+| `timePeriod` | string | Predefined time period filter: `'qdr:h'`, `'qdr:d'`, `'qdr:w'`, `'qdr:m'`, `'qdr:y'` | No |
 | `includeHtml` | boolean | Whether to include raw HTML in the response | No |
 
 #### Google Jobs
@@ -385,6 +358,7 @@ Get Google Jobs search results.
 | `query` | string | Job search query | Yes |
 | `tld` | string | Google top-level domain | No |
 | `countryCode` | string | Two-letter country code for geo-targeting | No |
+| `outputFormat` | string | Output format: `'json'` (default) or `'csv'` | No |
 
 #### Google News
 
@@ -395,9 +369,8 @@ Get Google News results.
 | `query` | string | News search query | Yes |
 | `tld` | string | Google top-level domain | No |
 | `countryCode` | string | Two-letter country code for geo-targeting | No |
-| `dateRangeStart` | string | Start date for date-range filtering | No |
-| `dateRangeEnd` | string | End date for date-range filtering | No |
-| `timePeriod` | string | Predefined time period filter | No |
+| `outputFormat` | string | Output format: `'json'` (default) or `'csv'` | No |
+| `timePeriod` | string | Predefined time period filter: `'qdr:h'`, `'qdr:d'`, `'qdr:w'`, `'qdr:m'`, `'qdr:y'` | No |
 
 #### Google Shopping
 
@@ -408,6 +381,7 @@ Get Google Shopping results.
 | `query` | string | Shopping search query | Yes |
 | `tld` | string | Google top-level domain | No |
 | `countryCode` | string | Two-letter country code for geo-targeting | No |
+| `outputFormat` | string | Output format: `'json'` (default) or `'csv'` | No |
 | `includeHtml` | boolean | Whether to include raw HTML in the response | No |
 
 #### Google Maps Search
@@ -438,8 +412,9 @@ Search for items on eBay.
 | `query` | string | Search query | Yes |
 | `tld` | string | eBay top-level domain | No |
 | `countryCode` | string | Two-letter country code for geo-targeting | No |
+| `outputFormat` | string | Output format: `'json'` (default) or `'csv'` | No |
 | `page` | number | Page number of search results | No |
-| `itemsPerPage` | number | Number of items per page | No |
+| `itemsPerPage` | number | Number of items per page (`60`, `120`, or `240`) | No |
 | `sellerId` | string | Filter by specific seller | No |
 | `condition` | string | Filter by item condition | No |
 | `buyingFormat` | string | Filter by buying format: `'buy_it_now'`, `'auction'`, `'accepts_offers'` | No |
@@ -455,6 +430,7 @@ Get detailed product information from eBay.
 | `productId` | string | The eBay product/item ID | Yes |
 | `tld` | string | eBay top-level domain | No |
 | `countryCode` | string | Two-letter country code for geo-targeting | No |
+| `outputFormat` | string | Output format: `'json'` (default) or `'csv'` | No |
 
 </details>
 
@@ -470,6 +446,7 @@ Search for products on Walmart.
 | `query` | string | Search query | Yes |
 | `tld` | string | Walmart top-level domain | No |
 | `countryCode` | string | Two-letter country code for geo-targeting | No |
+| `outputFormat` | string | Output format: `'json'` (default) or `'csv'` | No |
 | `page` | number | Page number of search results | No |
 
 #### Walmart Category
@@ -481,6 +458,7 @@ Browse products by Walmart category.
 | `category` | string | Walmart category ID | Yes |
 | `tld` | string | Walmart top-level domain | No |
 | `countryCode` | string | Two-letter country code for geo-targeting | No |
+| `outputFormat` | string | Output format: `'json'` (default) or `'csv'` | No |
 | `page` | number | Page number of results | No |
 
 #### Walmart Product
@@ -492,6 +470,7 @@ Get detailed product information from Walmart.
 | `productId` | string | The Walmart product ID | Yes |
 | `tld` | string | Walmart top-level domain | No |
 | `countryCode` | string | Two-letter country code for geo-targeting | No |
+| `outputFormat` | string | Output format: `'json'` (default) or `'csv'` | No |
 
 #### Walmart Review
 
@@ -502,6 +481,7 @@ Get customer reviews for a Walmart product.
 | `productId` | string | The Walmart product ID | Yes |
 | `tld` | string | Walmart top-level domain | No |
 | `countryCode` | string | Two-letter country code for geo-targeting | No |
+| `outputFormat` | string | Output format: `'json'` (default) or `'csv'` | No |
 | `page` | number | Page number of reviews | No |
 | `sort` | string | Sort order for reviews | No |
 | `ratings` | string | Filter by rating | No |
