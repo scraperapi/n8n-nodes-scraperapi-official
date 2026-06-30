@@ -1,6 +1,6 @@
 {
 	"name": "n8n-nodes-scraperapi-official",
-	"version": "1.2.3",
+	"version": "1.3.0",
 	"description": "Official ScraperAPI nodes for n8n",
 	"license": "MIT",
 	"homepage": "https://www.scraperapi.com",
