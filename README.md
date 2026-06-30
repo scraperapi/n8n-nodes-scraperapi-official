@@ -211,6 +211,7 @@ Retrieve a parser's details, including its generation status (`GENERATING`, `FIN
 | Parameter | Type | Description | Required |
 |-----------|------|-------------|----------|
 | `parserId` | string | The ID of the parser returned when it was created | Yes |
+| `version` | number | A specific parser version to retrieve. Leave as `-1` for the latest version. | No |
 
 </details>
 
@@ -230,6 +231,7 @@ Apply a finished parser to a target URL and return the extracted structured data
 |-----------|------|-------------|----------|
 | `parserId` | string | The ID of the parser to apply | Yes |
 | `url` | string | The target URL to scrape and parse | Yes |
+| `version` | number | A specific parser version to apply. Leave as `-1` for the latest version. | No |
 | `scraperParams` | object | Optional scrape settings applied when fetching the target page (see below) | No |
 
 </details>
@@ -242,6 +244,7 @@ Modify an existing parser's fields. Adding or modifying fields triggers a new pa
 | Parameter | Type | Description | Required |
 |-----------|------|-------------|----------|
 | `parserId` | string | The ID of the parser to update | Yes |
+| `version` | number | The parser version to update (a new parser starts at version `0`). Leave as `-1` to update the latest version. | No |
 | `addFields` | collection | Fields to add (`name`, `description`, `type`, `selector`) | No |
 | `modifyFields` | collection | Existing fields to redefine (`name`, `description`, `type`, `selector`) | No |
 | `renameFields` | collection | Fields to rename (`name`, `new_name`) | No |

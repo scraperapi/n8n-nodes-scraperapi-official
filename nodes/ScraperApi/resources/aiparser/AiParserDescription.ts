@@ -214,6 +214,15 @@ const aiParserParameters: INodeProperties[] = [
         description: 'The ID of the parser returned when it was created',
     },
     {
+        displayName: 'Version',
+        name: 'aiParserVersion',
+        type: 'number',
+        typeOptions: { minValue: -1 },
+        displayOptions: { show: { operation: ['aiParserGet', 'aiParserParse', 'aiParserUpdate'] } },
+        default: -1,
+        description: 'The specific parser version to target. Leave as -1 to use the latest version. A new parser starts at version 0; use Get a Parser or List Parsers to find available versions.',
+    },
+    {
         displayName: 'URL',
         name: 'aiParserUrl',
         type: 'string',

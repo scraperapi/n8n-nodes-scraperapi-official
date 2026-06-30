@@ -50,6 +50,18 @@ export class AiParserResource {
         return credentials.apiKey;
     }
 
+    // Builds the optional `/{version}` path segment. Returns '' when no version is set so the request targets the parser's latest version.
+    private versionPathSegment(itemIndex: number): string {
+        const version = this.n8n.getNodeParameter('aiParserVersion', itemIndex, -1) as number;
+        if (version == null || version < 0) {
+            return '';
+        }
+        if (!Number.isInteger(version)) {
+            throw new NodeOperationError(this.n8n.getNode(), 'Version must be a non-negative integer');
+        }
+        return `/${encodeURIComponent(version)}`;
+    }
+
     private buildScraperParams(itemIndex: number): AiParserScraperParams {
         const raw = this.n8n.getNodeParameter('aiParserScraperParams', itemIndex, {}) as ScraperParamCollection;
         const scraperParams: AiParserScraperParams = {};
@@ -176,7 +188,7 @@ export class AiParserResource {
         const requestOptions: IHttpRequestOptions = {
             method: 'GET',
             baseURL: AIPARSER_BASE_URL,
-            url: `/parsers/${encodeURIComponent(parserId)}`,
+            url: `/parsers/${encodeURIComponent(parserId)}${this.versionPathSegment(itemIndex)}`,
             qs: { api_key: apiKey },
             returnFullResponse: true,
         };
@@ -218,7 +230,7 @@ export class AiParserResource {
         const requestOptions: IHttpRequestOptions = {
             method: 'GET',
             baseURL: AIPARSER_BASE_URL,
-            url: `/parse/${encodeURIComponent(parserId)}`,
+            url: `/parse/${encodeURIComponent(parserId)}${this.versionPathSegment(itemIndex)}`,
             qs,
             returnFullResponse: true,
         };
@@ -269,7 +281,7 @@ export class AiParserResource {
         const requestOptions: IHttpRequestOptions = {
             method: 'PATCH',
             baseURL: AIPARSER_BASE_URL,
-            url: `/parsers/${encodeURIComponent(parserId)}`,
+            url: `/parsers/${encodeURIComponent(parserId)}${this.versionPathSegment(itemIndex)}`,
             body,
             returnFullResponse: true,
         };
