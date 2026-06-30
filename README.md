@@ -58,6 +58,13 @@ This is an n8n community node that lets you use **ScraperAPI** in your n8n workf
     - Initiate a crawler job
     - Get a job status
     - Cancel a crawler job
+  - AI Parser
+    - Create a parser
+    - Get a parser
+    - List parsers
+    - Parse a URL
+    - Update a parser
+    - Delete a parser
 
 ## Credentials
 
@@ -81,11 +88,12 @@ For more information, see the [ScraperAPI API Key Documentation](https://docs.sc
 
 ## Usage
 
-The ScraperAPI node supports three resources:
+The ScraperAPI node supports four resources:
 
 - **API**: Scrape a single URL with a GET request. The node handles proxies, browser automation, and CAPTCHA solving.
 - **Structured Data Endpoint**: Extract structured data from popular websites (Amazon, Google, eBay, Walmart, Redfin) using purpose-built endpoints that return clean, parsed JSON.
 - **Crawler**: Run multi-page crawler jobs that follow links from a start URL and stream results to a webhook.
+- **AI Parser**: Build a reusable AI-powered parser from a few example URLs, then apply it to extract structured JSON from any page with the same layout.
 
 1. Add a **ScraperAPI** node to your workflow
 2. Select the ScraperAPI resource, for example the **API**
@@ -176,6 +184,97 @@ Stop a running crawler job.
 | `jobId` | string | The crawler job ID returned when you initiated the job | Yes |
 
 </details>
+
+### AI Parser
+
+The **AI Parser** resource uses the [ScraperAPI AI Parser](https://docs.scraperapi.com/ai-parser) to generate a reusable parser from a handful of example URLs. Once a parser finishes generating, you can apply it to any page that shares the same layout to extract clean, structured JSON. All AI Parser operations are accessed via `https://aiparser.scraperapi.com`.
+
+<details>
+<summary><strong>Create a Parser</strong></summary>
+
+Create a new parser from example URLs. The parser is generated asynchronously; you receive an `id` and `version` to track its status. Use **Get a Parser** to check when generation has finished.
+
+| Parameter | Type | Description | Required |
+|-----------|------|-------------|----------|
+| `name` | string | A name to identify the parser | Yes |
+| `urls` | string[] | Two or three example URLs of pages with the same structure (max 10). The AI uses these to learn how to extract the fields. | Yes |
+| `fields` | collection | Optional list of fields to extract (`name`, `description`, `type`, `selector`). Leave empty to let the AI infer the fields automatically. | No |
+| `scraperParams` | object | Optional scrape settings applied when fetching the example pages (see below) | No |
+
+</details>
+
+<details>
+<summary><strong>Get a Parser</strong></summary>
+
+Retrieve a parser's details, including its generation status (`GENERATING`, `FINISHED`, or `FAILED`), its fields, and example results.
+
+| Parameter | Type | Description | Required |
+|-----------|------|-------------|----------|
+| `parserId` | string | The ID of the parser returned when it was created | Yes |
+
+</details>
+
+<details>
+<summary><strong>List Parsers</strong></summary>
+
+List all parsers associated with your account. This operation takes no parameters.
+
+</details>
+
+<details>
+<summary><strong>Parse a URL</strong></summary>
+
+Apply a finished parser to a target URL and return the extracted structured data.
+
+| Parameter | Type | Description | Required |
+|-----------|------|-------------|----------|
+| `parserId` | string | The ID of the parser to apply | Yes |
+| `url` | string | The target URL to scrape and parse | Yes |
+| `scraperParams` | object | Optional scrape settings applied when fetching the target page (see below) | No |
+
+</details>
+
+<details>
+<summary><strong>Update a Parser</strong></summary>
+
+Modify an existing parser's fields. Adding or modifying fields triggers a new parser version to be generated; renaming and removing fields are applied immediately. At least one of the parameters below must be set.
+
+| Parameter | Type | Description | Required |
+|-----------|------|-------------|----------|
+| `parserId` | string | The ID of the parser to update | Yes |
+| `addFields` | collection | Fields to add (`name`, `description`, `type`, `selector`) | No |
+| `modifyFields` | collection | Existing fields to redefine (`name`, `description`, `type`, `selector`) | No |
+| `renameFields` | collection | Fields to rename (`name`, `new_name`) | No |
+| `removeFields` | string[] | Names of fields to remove | No |
+
+</details>
+
+<details>
+<summary><strong>Delete a Parser</strong></summary>
+
+Permanently delete a parser.
+
+| Parameter | Type | Description | Required |
+|-----------|------|-------------|----------|
+| `parserId` | string | The ID of the parser to delete | Yes |
+
+</details>
+
+#### Scraper Parameters
+
+The optional `scraperParams` collection (available on **Create a Parser** and **Parse a URL**) controls how ScraperAPI fetches pages:
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `countryCode` | string | Two-letter country code for geo-specific scraping (e.g. `us`, `gb`, `de`) |
+| `deviceType` | string | Scrape as a `desktop` or `mobile` device |
+| `followRedirect` | boolean | Whether to follow HTTP redirects |
+| `keepHeaders` | boolean | Whether to keep the original response headers |
+| `premium` | boolean | Use premium residential/mobile proxies (incompatible with `ultraPremium`) |
+| `render` | boolean | Enable JavaScript rendering for dynamic content |
+| `retry404` | boolean | Whether to retry requests that return a 404 status code |
+| `sessionNumber` | number | Reuse the same proxy session by passing an integer |
+| `ultraPremium` | boolean | Activate advanced bypass mechanisms (incompatible with `premium`) |
 
 ### Structured Data Endpoints (SDEs)
 
@@ -462,7 +561,9 @@ Get real estate agent information from Redfin.
 - **1.1.0**: Crawler resource: initiate crawler jobs, get job status, and cancel jobs.
 - **1.2.0**: Structured Data Endpoints (SDEs) resource for Amazon, Google, Walmart, eBay, and Redfin.
 - **1.2.1**: Refactor SDE optional parameters into per-operation collections to satisfy the n8n community node validator.
-- **1.2.2**: Publish via GitHub Actions with npm provenance attestation; bump `@n8n/node-cli` to `^0.29.1`; preserve original error types (e.g. `NodeOperationError`) when `continueOnFail` is off.
+- **1.2.2**: Publish via GitHub Actions with npm provenance attestation; bump `@n8n/node-cli` to `^0.29.1`.
+- **1.2.3**: Preserve original error types (e.g. `NodeOperationError`) when `continueOnFail` is off.
+- **1.3.0**: AI Parser resource: create, get, list, parse, update, and delete AI-powered parsers. API resource: add the `zipCode` parameter for Amazon location-specific results (Amazon US only).
 
 ## More ScraperAPI Integrations
 
