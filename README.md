@@ -197,7 +197,7 @@ Create a new parser from example URLs. The parser is generated asynchronously; y
 | Parameter | Type | Description | Required |
 |-----------|------|-------------|----------|
 | `name` | string | A name to identify the parser | Yes |
-| `urls` | string[] | Two or three example URLs of pages with the same structure (max 10). The AI uses these to learn how to extract the fields. | Yes |
+| `urls` | string[] | One to three example URLs of pages with the same structure (max 3). The AI uses these to learn how to extract the fields. | Yes |
 | `fields` | collection | Optional list of fields to extract (`name`, `description`, `type`, `selector`). Leave empty to let the AI infer the fields automatically. | No |
 | `scraperParams` | object | Optional scrape settings applied when fetching the example pages (see below) | No |
 

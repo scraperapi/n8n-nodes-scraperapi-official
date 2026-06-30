@@ -135,8 +135,8 @@ export class AiParserResource {
         if (urls.length === 0) {
             throw new NodeOperationError(this.n8n.getNode(), 'At least one example URL is required');
         }
-        if (urls.length > 10) {
-            throw new NodeOperationError(this.n8n.getNode(), 'A maximum of 10 example URLs is allowed');
+        if (urls.length > 3) {
+            throw new NodeOperationError(this.n8n.getNode(), 'A maximum of 3 example URLs is allowed');
         }
 
         const body: CreateParserBody = {

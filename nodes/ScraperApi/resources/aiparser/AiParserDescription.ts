@@ -182,7 +182,7 @@ const aiParserParameters: INodeProperties[] = [
         displayOptions: { show: { operation: ['aiParserCreate'] } },
         default: [],
         required: true,
-        description: 'Two or three example URLs of pages with the same structure (max 10). The AI uses these to learn how to extract the fields.',
+        description: 'One to three example URLs of pages with the same structure (max 3). The AI uses these to learn how to extract the fields.',
     },
     {
         displayName: 'Fields',
