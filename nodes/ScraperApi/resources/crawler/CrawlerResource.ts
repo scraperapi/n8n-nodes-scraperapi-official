@@ -34,10 +34,14 @@ export class CrawlerResource {
 				crawlerApiAutoparse?: boolean;
 				crawlerApiCountryCode?: string;
 				crawlerApiDesktopDevice?: boolean;
+				crawlerApiFollowRedirect?: boolean;
+				crawlerApiKeepHeaders?: boolean;
 				crawlerApiMobileDevice?: boolean;
 				crawlerApiOutputFormat?: 'csv' | 'html' | 'json' | 'markdown' | 'text';
 				crawlerApiPremium?: boolean;
 				crawlerApiRender?: boolean;
+				crawlerApiRetry404?: boolean;
+				crawlerApiSessionNumber?: number;
 				crawlerApiUltraPremium?: boolean;
 			};
 		};
@@ -69,6 +73,18 @@ export class CrawlerResource {
 		}
 		if (apiOpts.crawlerApiUltraPremium) {
 			apiParams.ultra_premium = apiOpts.crawlerApiUltraPremium;
+		}
+		if (apiOpts.crawlerApiFollowRedirect !== undefined) {
+			apiParams.follow_redirect = apiOpts.crawlerApiFollowRedirect;
+		}
+		if (apiOpts.crawlerApiKeepHeaders !== undefined) {
+			apiParams.keep_headers = apiOpts.crawlerApiKeepHeaders;
+		}
+		if (apiOpts.crawlerApiRetry404 !== undefined) {
+			apiParams.retry_404 = apiOpts.crawlerApiRetry404;
+		}
+		if (apiOpts.crawlerApiSessionNumber != null && apiOpts.crawlerApiSessionNumber > 0) {
+			apiParams.session_number = apiOpts.crawlerApiSessionNumber;
 		}
 
 		const params: CreateJobBody = {

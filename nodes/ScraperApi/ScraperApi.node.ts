@@ -3,14 +3,17 @@ import type {
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
+	JsonObject,
 } from 'n8n-workflow';
-import { NodeConnectionTypes, NodeOperationError } from 'n8n-workflow';
+import { NodeApiError, NodeConnectionTypes, NodeOperationError } from 'n8n-workflow';
 import { ApiResource } from './resources/api/ApiResource';
 import { ApiOperations, ApiFields } from './resources/api/ApiDescription';
 import { CrawlerResource } from './resources/crawler/CrawlerResource';
 import { CrawlerOperations, CrawlerFields } from './resources/crawler/CrawlerDescription';
 import { SdeResource } from './resources/sde/SdeResource';
 import { SdePlatform, SdeOperations, SdeFields } from './resources/sde/SdeDescription';
+import { AiParserResource } from './resources/aiparser/AiParserResource';
+import { AiParserOperations, AiParserFields } from './resources/aiparser/AiParserDescription';
 
 export class ScraperApi implements INodeType {
 	description: INodeTypeDescription = {
@@ -39,6 +42,7 @@ export class ScraperApi implements INodeType {
 				name: 'resource',
 				type: 'options',
 				options: [
+					{ name: 'AI Parser', value: 'aiparser' },
 					{ name: 'API', value: 'api' },
 					{ name: 'Crawler', value: 'crawler' },
 					{ name: 'Structured Data Endpoint', value: 'sde' },
@@ -52,9 +56,11 @@ export class ScraperApi implements INodeType {
 			...ApiOperations,
 			...SdeOperations,
 			...CrawlerOperations,
+			...AiParserOperations,
 			...ApiFields,
 			...SdeFields,
 			...CrawlerFields,
+			...AiParserFields,
 		],
 	};
 
@@ -68,6 +74,7 @@ export class ScraperApi implements INodeType {
 			api: ApiResource,
 			crawler: CrawlerResource,
 			sde: SdeResource,
+			aiparser: AiParserResource,
 		} as const;
 
 		const ResourceClass = resourceMap[resource as keyof typeof resourceMap];
@@ -103,7 +110,15 @@ export class ScraperApi implements INodeType {
 					});
 				}
 			} else {
-				returnData.push(await executeOne(i));
+				try {
+					returnData.push(await executeOne(i));
+				} catch (error) {
+					if (error instanceof NodeOperationError || error instanceof NodeApiError) {
+						// eslint-disable-next-line @n8n/community-nodes/require-node-api-error
+						throw error;
+					}
+					throw new NodeApiError(this.getNode(), error as JsonObject, { itemIndex: i });
+				}
 			}
 		}
 

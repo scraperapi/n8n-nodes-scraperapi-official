@@ -33,8 +33,6 @@ This is an n8n community node that lets you use **ScraperAPI** in your n8n workf
       - Product
       - Search
       - Offers
-      - Review
-      - Prices
     - Google
       - Search
       - Jobs
@@ -58,6 +56,13 @@ This is an n8n community node that lets you use **ScraperAPI** in your n8n workf
     - Initiate a crawler job
     - Get a job status
     - Cancel a crawler job
+  - AI Parser
+    - Create a parser
+    - Get a parser
+    - List parsers
+    - Parse a URL
+    - Update a parser
+    - Delete a parser
 
 ## Credentials
 
@@ -81,11 +86,12 @@ For more information, see the [ScraperAPI API Key Documentation](https://docs.sc
 
 ## Usage
 
-The ScraperAPI node supports three resources:
+The ScraperAPI node supports four resources:
 
 - **API**: Scrape a single URL with a GET request. The node handles proxies, browser automation, and CAPTCHA solving.
 - **Structured Data Endpoint**: Extract structured data from popular websites (Amazon, Google, eBay, Walmart, Redfin) using purpose-built endpoints that return clean, parsed JSON.
 - **Crawler**: Run multi-page crawler jobs that follow links from a start URL and stream results to a webhook.
+- **AI Parser**: Build a reusable AI-powered parser from a few example URLs, then apply it to extract structured JSON from any page with the same layout.
 
 1. Add a **ScraperAPI** node to your workflow
 2. Select the ScraperAPI resource, for example the **API**
@@ -127,6 +133,11 @@ The **API** resource allows you to scrape any website using ScraperAPI's endpoin
 | `autoparse` | boolean | Enable automatic parsing for select websites (default: `false`) | No |
 | `premium` | boolean | Use premium residential/mobile proxies for higher success rates (incompatible with `ultraPremium`) | No |
 | `ultraPremium` | boolean | Activate advanced bypass mechanisms for the most difficult websites (incompatible with `premium`) | No |
+| `zipCode` | string | US ZIP code for Amazon location-specific results (Amazon US only, e.g., `92223`) | No |
+| `sessionNumber` | number | Reuse the same proxy session by passing an integer (incompatible with `premium`/`ultraPremium`) | No |
+| `keepHeaders` | boolean | Keep the original response headers (not available with `ultraPremium`) | No |
+| `followRedirect` | boolean | Follow HTTP redirects when fetching the page (default: `true`) | No |
+| `retry404` | boolean | Retry requests that return a 404 status code (not available with `premium`/`ultraPremium`) | No |
 
 </details>
 
@@ -176,6 +187,101 @@ Stop a running crawler job.
 
 </details>
 
+### AI Parser
+
+The **AI Parser** resource uses the [ScraperAPI AI Parser](https://docs.scraperapi.com/ai-parser) to generate a reusable parser from a handful of example URLs. Once a parser finishes generating, you can apply it to any page that shares the same layout to extract clean, structured JSON. All AI Parser operations are accessed via `https://aiparser.scraperapi.com`.
+
+<details>
+<summary><strong>Create a Parser</strong></summary>
+
+Create a new parser from example URLs. The parser is generated asynchronously; you receive an `id` and `version` to track its status. Use **Get a Parser** to check when generation has finished.
+
+| Parameter | Type | Description | Required |
+|-----------|------|-------------|----------|
+| `name` | string | A name to identify the parser | Yes |
+| `urls` | string[] | One to three example URLs of pages with the same structure (max 3). The AI uses these to learn how to extract the fields. | Yes |
+| `fields` | collection | Optional list of fields to extract (`name`, `description`, `type`, `selector`). Leave empty to let the AI infer the fields automatically. | No |
+| `scraperParams` | object | Optional scrape settings applied when fetching the example pages (see below) | No |
+
+</details>
+
+<details>
+<summary><strong>Get a Parser</strong></summary>
+
+Retrieve a parser's details, including its generation status (`GENERATING`, `FINISHED`, or `FAILED`), its fields, and example results.
+
+| Parameter | Type | Description | Required |
+|-----------|------|-------------|----------|
+| `parserId` | string | The ID of the parser returned when it was created | Yes |
+| `version` | number | A specific parser version to retrieve. Leave as `-1` for the latest version. | No |
+
+</details>
+
+<details>
+<summary><strong>List Parsers</strong></summary>
+
+List all parsers associated with your account. This operation takes no parameters.
+
+</details>
+
+<details>
+<summary><strong>Parse a URL</strong></summary>
+
+Apply a finished parser to a target URL and return the extracted structured data.
+
+| Parameter | Type | Description | Required |
+|-----------|------|-------------|----------|
+| `parserId` | string | The ID of the parser to apply | Yes |
+| `url` | string | The target URL to scrape and parse | Yes |
+| `version` | number | A specific parser version to apply. Leave as `-1` for the latest version. | No |
+| `scraperParams` | object | Optional scrape settings applied when fetching the target page (see below) | No |
+
+</details>
+
+<details>
+<summary><strong>Update a Parser</strong></summary>
+
+Modify an existing parser's fields. Adding or modifying fields triggers a new parser version to be generated; renaming and removing fields are applied immediately. At least one of the parameters below must be set.
+
+| Parameter | Type | Description | Required |
+|-----------|------|-------------|----------|
+| `parserId` | string | The ID of the parser to update | Yes |
+| `version` | number | The parser version to update (a new parser starts at version `0`). Leave as `-1` to update the latest version. | No |
+| `addFields` | collection | Fields to add (`name`, `description`, `type`, `selector`) | No |
+| `modifyFields` | collection | Existing fields to redefine (`name`, `description`, `type`, `selector`) | No |
+| `renameFields` | collection | Fields to rename (`name`, `new_name`) | No |
+| `removeFields` | string[] | Names of fields to remove | No |
+
+</details>
+
+<details>
+<summary><strong>Delete a Parser</strong></summary>
+
+Permanently delete a parser.
+
+| Parameter | Type | Description | Required |
+|-----------|------|-------------|----------|
+| `parserId` | string | The ID of the parser to delete | Yes |
+
+</details>
+
+#### Scraper Parameters
+
+The optional `scraperParams` collection (available on **Create a Parser** and **Parse a URL**) controls how ScraperAPI fetches pages:
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `countryCode` | string | Two-letter country code for geo-specific scraping (e.g. `us`, `gb`, `de`) |
+| `desktopDevice` | boolean | Scrape the page as a desktop device |
+| `followRedirect` | boolean | Follow HTTP redirects when fetching the page (default: `true`) |
+| `keepHeaders` | boolean | Keep the original response headers (not available with `ultraPremium`) |
+| `mobileDevice` | boolean | Scrape the page as a mobile device |
+| `premium` | boolean | Use premium residential/mobile proxies (incompatible with `ultraPremium`) |
+| `render` | boolean | Enable JavaScript rendering for dynamic content |
+| `retry404` | boolean | Retry requests that return a 404 status code (not available with `premium`/`ultraPremium`) |
+| `sessionNumber` | number | Reuse the same proxy session by passing an integer (incompatible with `premium`/`ultraPremium`) |
+| `ultraPremium` | boolean | Activate advanced bypass mechanisms (incompatible with `premium`) |
+
 ### Structured Data Endpoints (SDEs)
 
 The **Structured Data Endpoints** resource provides purpose-built endpoints for extracting structured data from popular platforms. Each endpoint returns clean, parsed JSON without requiring manual parsing. All SDE endpoints are accessed via `https://api.scraperapi.com/structured/{platform}/{endpoint}`.
@@ -192,8 +298,7 @@ Extract detailed product information from Amazon.
 | `asin` | string | The Amazon Standard Identification Number (e.g., `B08N5WRWNW`) | Yes |
 | `tld` | string | Amazon top-level domain (e.g., `com`, `co.uk`, `de`) | No |
 | `countryCode` | string | Two-letter country code for geo-targeting | No |
-| `includeHtml` | boolean | Whether to include raw HTML in the response | No |
-| `language` | string | Language code for the response | No |
+| `outputFormat` | string | Output format: `'json'` (default) or `'csv'` | No |
 
 #### Amazon Search
 
@@ -204,10 +309,10 @@ Search for products on Amazon.
 | `query` | string | Search query (e.g., `laptop`) | Yes |
 | `tld` | string | Amazon top-level domain | No |
 | `countryCode` | string | Two-letter country code for geo-targeting | No |
+| `outputFormat` | string | Output format: `'json'` (default) or `'csv'` | No |
 | `page` | number | Page number of search results | No |
 | `sort` | string | Sort parameter | No |
-| `category` | string | Department/category filter | No |
-| `language` | string | Language code for the response | No |
+| `department` | string | Department/category filter | No |
 
 #### Amazon Offers
 
@@ -218,36 +323,13 @@ Get all offers (sellers) for a specific Amazon product.
 | `asin` | string | The Amazon Standard Identification Number | Yes |
 | `tld` | string | Amazon top-level domain | No |
 | `countryCode` | string | Two-letter country code for geo-targeting | No |
+| `outputFormat` | string | Output format: `'json'` (default) or `'csv'` | No |
 | `condition` | string | Filter by item condition | No |
 | `filterNew` | boolean | Filter for new items | No |
 | `filterUsedGood` | boolean | Filter for used - good condition | No |
 | `filterUsedLikeNew` | boolean | Filter for used - like new condition | No |
 | `filterUsedVeryGood` | boolean | Filter for used - very good condition | No |
 | `filterUsedAcceptable` | boolean | Filter for used - acceptable condition | No |
-
-#### Amazon Review
-
-Get customer reviews for an Amazon product.
-
-| Parameter | Type | Description | Required |
-|-----------|------|-------------|----------|
-| `asin` | string | The Amazon Standard Identification Number | Yes |
-| `tld` | string | Amazon top-level domain | No |
-| `countryCode` | string | Two-letter country code for geo-targeting | No |
-| `filterByStar` | string | Filter reviews by star rating | No |
-| `reviewerType` | string | Filter by reviewer type | No |
-| `pageNumber` | number | Page number of reviews | No |
-| `sortBy` | string | Sort order for reviews | No |
-
-#### Amazon Prices
-
-Get pricing information for multiple Amazon products at once.
-
-| Parameter | Type | Description | Required |
-|-----------|------|-------------|----------|
-| `asins` | string | Comma-separated list of ASINs (max 8) | Yes |
-| `tld` | string | Amazon top-level domain | No |
-| `countryCode` | string | Two-letter country code for geo-targeting | No |
 
 </details>
 
@@ -263,9 +345,8 @@ Get Google search results.
 | `query` | string | Search query | Yes |
 | `tld` | string | Google top-level domain (e.g., `com`, `co.uk`) | No |
 | `countryCode` | string | Two-letter country code for geo-targeting | No |
-| `dateRangeStart` | string | Start date for date-range filtering | No |
-| `dateRangeEnd` | string | End date for date-range filtering | No |
-| `timePeriod` | string | Predefined time period filter | No |
+| `outputFormat` | string | Output format: `'json'` (default) or `'csv'` | No |
+| `timePeriod` | string | Predefined time period filter: `'qdr:h'`, `'qdr:d'`, `'qdr:w'`, `'qdr:m'`, `'qdr:y'` | No |
 | `includeHtml` | boolean | Whether to include raw HTML in the response | No |
 
 #### Google Jobs
@@ -277,6 +358,7 @@ Get Google Jobs search results.
 | `query` | string | Job search query | Yes |
 | `tld` | string | Google top-level domain | No |
 | `countryCode` | string | Two-letter country code for geo-targeting | No |
+| `outputFormat` | string | Output format: `'json'` (default) or `'csv'` | No |
 
 #### Google News
 
@@ -287,9 +369,8 @@ Get Google News results.
 | `query` | string | News search query | Yes |
 | `tld` | string | Google top-level domain | No |
 | `countryCode` | string | Two-letter country code for geo-targeting | No |
-| `dateRangeStart` | string | Start date for date-range filtering | No |
-| `dateRangeEnd` | string | End date for date-range filtering | No |
-| `timePeriod` | string | Predefined time period filter | No |
+| `outputFormat` | string | Output format: `'json'` (default) or `'csv'` | No |
+| `timePeriod` | string | Predefined time period filter: `'qdr:h'`, `'qdr:d'`, `'qdr:w'`, `'qdr:m'`, `'qdr:y'` | No |
 
 #### Google Shopping
 
@@ -300,6 +381,7 @@ Get Google Shopping results.
 | `query` | string | Shopping search query | Yes |
 | `tld` | string | Google top-level domain | No |
 | `countryCode` | string | Two-letter country code for geo-targeting | No |
+| `outputFormat` | string | Output format: `'json'` (default) or `'csv'` | No |
 | `includeHtml` | boolean | Whether to include raw HTML in the response | No |
 
 #### Google Maps Search
@@ -330,8 +412,9 @@ Search for items on eBay.
 | `query` | string | Search query | Yes |
 | `tld` | string | eBay top-level domain | No |
 | `countryCode` | string | Two-letter country code for geo-targeting | No |
+| `outputFormat` | string | Output format: `'json'` (default) or `'csv'` | No |
 | `page` | number | Page number of search results | No |
-| `itemsPerPage` | number | Number of items per page | No |
+| `itemsPerPage` | number | Number of items per page (`60`, `120`, or `240`) | No |
 | `sellerId` | string | Filter by specific seller | No |
 | `condition` | string | Filter by item condition | No |
 | `buyingFormat` | string | Filter by buying format: `'buy_it_now'`, `'auction'`, `'accepts_offers'` | No |
@@ -347,6 +430,7 @@ Get detailed product information from eBay.
 | `productId` | string | The eBay product/item ID | Yes |
 | `tld` | string | eBay top-level domain | No |
 | `countryCode` | string | Two-letter country code for geo-targeting | No |
+| `outputFormat` | string | Output format: `'json'` (default) or `'csv'` | No |
 
 </details>
 
@@ -362,6 +446,7 @@ Search for products on Walmart.
 | `query` | string | Search query | Yes |
 | `tld` | string | Walmart top-level domain | No |
 | `countryCode` | string | Two-letter country code for geo-targeting | No |
+| `outputFormat` | string | Output format: `'json'` (default) or `'csv'` | No |
 | `page` | number | Page number of search results | No |
 
 #### Walmart Category
@@ -373,6 +458,7 @@ Browse products by Walmart category.
 | `category` | string | Walmart category ID | Yes |
 | `tld` | string | Walmart top-level domain | No |
 | `countryCode` | string | Two-letter country code for geo-targeting | No |
+| `outputFormat` | string | Output format: `'json'` (default) or `'csv'` | No |
 | `page` | number | Page number of results | No |
 
 #### Walmart Product
@@ -384,6 +470,7 @@ Get detailed product information from Walmart.
 | `productId` | string | The Walmart product ID | Yes |
 | `tld` | string | Walmart top-level domain | No |
 | `countryCode` | string | Two-letter country code for geo-targeting | No |
+| `outputFormat` | string | Output format: `'json'` (default) or `'csv'` | No |
 
 #### Walmart Review
 
@@ -394,6 +481,7 @@ Get customer reviews for a Walmart product.
 | `productId` | string | The Walmart product ID | Yes |
 | `tld` | string | Walmart top-level domain | No |
 | `countryCode` | string | Two-letter country code for geo-targeting | No |
+| `outputFormat` | string | Output format: `'json'` (default) or `'csv'` | No |
 | `page` | number | Page number of reviews | No |
 | `sort` | string | Sort order for reviews | No |
 | `ratings` | string | Filter by rating | No |
@@ -461,7 +549,9 @@ Get real estate agent information from Redfin.
 - **1.1.0**: Crawler resource: initiate crawler jobs, get job status, and cancel jobs.
 - **1.2.0**: Structured Data Endpoints (SDEs) resource for Amazon, Google, Walmart, eBay, and Redfin.
 - **1.2.1**: Refactor SDE optional parameters into per-operation collections to satisfy the n8n community node validator.
-- **1.2.2**: Publish via GitHub Actions with npm provenance attestation; bump `@n8n/node-cli` to `^0.29.1`; preserve original error types (e.g. `NodeOperationError`) when `continueOnFail` is off.
+- **1.2.2**: Publish via GitHub Actions with npm provenance attestation; bump `@n8n/node-cli` to `^0.29.1`.
+- **1.2.3**: Preserve original error types (e.g. `NodeOperationError`) when `continueOnFail` is off.
+- **1.3.0**: AI Parser resource: create, get, list, parse, update, and delete AI-powered parsers. API resource: add the `zipCode` parameter for Amazon location-specific results (Amazon US only).
 
 ## More ScraperAPI Integrations
 
