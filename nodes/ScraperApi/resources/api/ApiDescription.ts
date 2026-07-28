@@ -55,6 +55,36 @@ const apiParameters: INodeProperties[] = [
                 description: 'Two-letter country code for geo-specific scraping',
             },
             {
+                displayName: 'Custom Headers',
+                name: 'apiCustomHeaders',
+                type: 'fixedCollection',
+                typeOptions: { multipleValues: true },
+                default: {},
+                placeholder: 'Add Header',
+                description: 'Custom request headers to forward to the target website. Providing any header enables Keep Headers automatically. Overriding ScraperAPI\'s own headers often lowers success rates, and custom headers are ignored when Ultra Premium is enabled.',
+                options: [
+                    {
+                        name: 'header',
+                        displayName: 'Header',
+                        values: [
+                            {
+                                displayName: 'Name',
+                                name: 'name',
+                                type: 'string',
+                                default: '',
+                                placeholder: 'e.g. Referer',
+                            },
+                            {
+                                displayName: 'Value',
+                                name: 'value',
+                                type: 'string',
+                                default: '',
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
                 displayName: 'Desktop Device',
                 name: 'apiDesktopDevice',
                 type: 'boolean',
@@ -69,11 +99,19 @@ const apiParameters: INodeProperties[] = [
                 description: 'Whether to follow HTTP redirects when fetching the page',
             },
             {
+                displayName: 'Instruction Set',
+                name: 'apiInstructionSet',
+                type: 'json',
+                default: '',
+                description: 'JSON array of rendering instructions (e.g. click, wait_for_event) executed on the page before returning it. Sent as the x-sapi-instruction_set header and implies Render. See https://docs.scraperapi.com/javascript-rendering/rendering-instruction-set.',
+                typeOptions: { rows: 4 },
+            },
+            {
                 displayName: 'Keep Headers',
                 name: 'apiKeepHeaders',
                 type: 'boolean',
                 default: false,
-                description: 'Whether to keep the original response headers (not available with Ultra Premium)',
+                description: 'Whether to forward your custom request headers to the target website. Enable this (or add a Custom Header, which enables it automatically) to use your own headers. Not available with Ultra Premium.',
             },
             {
                 displayName: 'Mobile Device',
@@ -130,6 +168,14 @@ const apiParameters: INodeProperties[] = [
                 type: 'boolean',
                 default: false,
                 description: 'Whether to activate advanced bypass mechanisms (Can not be combined with Premium)',
+            },
+            {
+                displayName: 'Wait For Selector',
+                name: 'apiWaitForSelector',
+                type: 'string',
+                default: '',
+                placeholder: 'e.g. .main-content',
+                description: 'CSS selector to wait for in the DOM before returning the page. Implies Render.',
             },
             {
                 displayName: 'ZIP Code',

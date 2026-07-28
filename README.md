@@ -135,9 +135,12 @@ The **API** resource allows you to scrape any website using ScraperAPI's endpoin
 | `ultraPremium` | boolean | Activate advanced bypass mechanisms for the most difficult websites (incompatible with `premium`) | No |
 | `zipCode` | string | US ZIP code for Amazon location-specific results (Amazon US only, e.g., `92223`) | No |
 | `sessionNumber` | number | Reuse the same proxy session by passing an integer (incompatible with `premium`/`ultraPremium`) | No |
-| `keepHeaders` | boolean | Keep the original response headers (not available with `ultraPremium`) | No |
+| `keepHeaders` | boolean | Forward your custom request headers to the target website (not available with `ultraPremium`). Adding a `customHeaders` entry enables this automatically. | No |
+| `customHeaders` | collection | Custom request headers (name/value pairs) forwarded to the target website; providing any header turns on `keepHeaders`. Only use when you specifically need them — overriding ScraperAPI's own header management often lowers success rates. Discarded when `ultraPremium` is enabled. | No |
 | `followRedirect` | boolean | Follow HTTP redirects when fetching the page (default: `true`) | No |
 | `retry404` | boolean | Retry requests that return a 404 status code (not available with `premium`/`ultraPremium`) | No |
+| `instructionSet` | json | JSON array of [rendering instructions](https://docs.scraperapi.com/javascript-rendering/rendering-instruction-set) (e.g. `click`, `wait_for_event`) run in the browser before the page is returned. Sent as the `x-sapi-instruction_set` header and implies `render`. | No |
+| `waitForSelector` | string | CSS selector to wait for in the DOM before returning the page. Implies `render`. | No |
 
 </details>
 
@@ -552,6 +555,7 @@ Get real estate agent information from Redfin.
 - **1.2.2**: Publish via GitHub Actions with npm provenance attestation; bump `@n8n/node-cli` to `^0.29.1`.
 - **1.2.3**: Preserve original error types (e.g. `NodeOperationError`) when `continueOnFail` is off.
 - **1.3.0**: AI Parser resource: create, get, list, parse, update, and delete AI-powered parsers. API resource: add the `zipCode` parameter for Amazon location-specific results (Amazon US only).
+- **1.4.0**: API resource: add the `instructionSet` parameter to run browser rendering instructions (click, input, scroll, wait) via the `x-sapi-instruction_set` header, e.g. to dismiss cookie-consent walls before capturing the page. Add the `customHeaders` parameter to forward your own request headers to the target site (enabling `keepHeaders` automatically), and fix the `keepHeaders` description (it forwards request headers to the target, not response headers). Add the `waitForSelector` parameter to wait for a CSS selector before returning the page.
 
 ## More ScraperAPI Integrations
 
