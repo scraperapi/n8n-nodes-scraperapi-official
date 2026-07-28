@@ -12,6 +12,9 @@ export interface ApiParameters {
     keep_headers?: boolean;
     follow_redirect?: boolean;
     retry_404?: boolean;
+    instruction_set?: string;
+    custom_headers?: Record<string, string>;
+    wait_for_selector?: string;
 }
 
 export interface ApiResponse {

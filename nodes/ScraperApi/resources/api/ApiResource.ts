@@ -28,6 +28,9 @@ export class ApiResource {
 			apiKeepHeaders?: boolean;
 			apiFollowRedirect?: boolean;
 			apiRetry404?: boolean;
+			apiInstructionSet?: string;
+			apiCustomHeaders?: { header?: Array<{ name?: string; value?: string }> };
+			apiWaitForSelector?: string;
 		};
 
 		const apiParams: ApiParameters = {
@@ -84,7 +87,84 @@ export class ApiResource {
 			apiParams.retry_404 = optionalParameters.apiRetry404;
 		}
 
+		const instructionSet = this.normalizeInstructionSet(optionalParameters.apiInstructionSet);
+		if (instructionSet) {
+			apiParams.instruction_set = instructionSet;
+			apiParams.render = true;
+		}
+
+		const customHeaders = this.buildCustomHeaders(optionalParameters.apiCustomHeaders);
+		if (customHeaders) {
+			apiParams.custom_headers = customHeaders;
+			apiParams.keep_headers = true;
+		}
+
+		const waitForSelector = optionalParameters.apiWaitForSelector?.trim();
+		if (waitForSelector) {
+			apiParams.wait_for_selector = waitForSelector;
+			apiParams.render = true;
+		}
+
 		return apiParams;
+	}
+
+	/**
+	 * Turns the Custom Headers fixed collection into a plain header map, skipping
+	 * entries with a blank name. Returns undefined when no usable header is present.
+	 */
+	private buildCustomHeaders(
+		raw?: { header?: Array<{ name?: string; value?: string }> },
+	): Record<string, string> | undefined {
+		const entries = raw?.header;
+		if (!Array.isArray(entries) || entries.length === 0) {
+			return undefined;
+		}
+
+		const headers: Record<string, string> = {};
+		for (const entry of entries) {
+			const name = (entry?.name ?? '').trim();
+			if (name === '') {
+				continue;
+			}
+			headers[name] = entry?.value ?? '';
+		}
+
+		return Object.keys(headers).length > 0 ? headers : undefined;
+	}
+
+	/**
+	 * Validates the optional Instruction Set input and returns it as a compact JSON
+	 * string ready for the `x-sapi-instruction_set` header, or undefined when empty.
+	 * Throws a NodeOperationError with a clear message on malformed input.
+	 */
+	private normalizeInstructionSet(raw?: string): string | undefined {
+		if (raw == null) {
+			return undefined;
+		}
+
+		const trimmed = typeof raw === 'string' ? raw.trim() : raw;
+		if (trimmed === '' || trimmed === '{}' || trimmed === '[]') {
+			return undefined;
+		}
+
+		let parsed: unknown;
+		try {
+			parsed = typeof trimmed === 'string' ? JSON.parse(trimmed) : trimmed;
+		} catch (error) {
+			throw new NodeOperationError(
+				this.n8n.getNode(),
+				`Instruction Set must be valid JSON: ${(error as Error).message}`,
+			);
+		}
+
+		if (!Array.isArray(parsed) || parsed.length === 0) {
+			throw new NodeOperationError(
+				this.n8n.getNode(),
+				'Instruction Set must be a non-empty JSON array of instructions',
+			);
+		}
+
+		return JSON.stringify(parsed);
 	}
 
 	async submitRequest(params: ApiParameters): Promise<ApiResponse> {
@@ -141,6 +221,10 @@ export class ApiResource {
 			qs.retry_404 = params.retry_404;
 		}
 
+		if (params.wait_for_selector) {
+			qs.wait_for_selector = params.wait_for_selector;
+		}
+
 		const requestOptions: IHttpRequestOptions = {
 			method: 'GET',
 			baseURL: 'https://api.scraperapi.com',
@@ -148,6 +232,20 @@ export class ApiResource {
 			qs,
 			returnFullResponse: true,
 		};
+
+		if (params.custom_headers) {
+			requestOptions.headers = {
+				...(requestOptions.headers ?? {}),
+				...params.custom_headers,
+			};
+		}
+
+		if (params.instruction_set) {
+			requestOptions.headers = {
+				...(requestOptions.headers ?? {}),
+				'x-sapi-instruction_set': params.instruction_set,
+			};
+		}
 
         const response = await this.n8n.helpers.httpRequestWithAuthentication.call(
             this.n8n,
