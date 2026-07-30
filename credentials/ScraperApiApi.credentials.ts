@@ -9,7 +9,10 @@ import type {
 export class ScraperApiApi implements ICredentialType {
 	name = 'scraperApi-Api';
 	displayName = 'ScraperAPI API';
-	icon: Icon = 'file:../icons/ScraperApi.svg';
+	icon: Icon = {
+		light: 'file:../icons/scraperapi-light.svg',
+		dark: 'file:../icons/scraperapi-dark.svg',
+	};
 	documentationUrl = 'https://docs.scraperapi.com/dashboard-and-billing/api-key';
 	properties: INodeProperties[] = [
 		{

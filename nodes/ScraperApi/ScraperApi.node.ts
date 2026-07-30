@@ -19,7 +19,10 @@ export class ScraperApi implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'ScraperAPI',
 		name: 'scraperApi',
-		icon: 'file:../../icons/ScraperApi.svg',
+		icon: {
+			light: 'file:../../icons/scraperapi-light.svg',
+			dark: 'file:../../icons/scraperapi-dark.svg',
+		},
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{ $parameter["resource"] === "sde" ? ($parameter["operation"] || "").replace(/([A-Z])/g, " $1").trim() : $parameter["operation"] + ": " + $parameter["resource"] }}',
@@ -113,9 +116,8 @@ export class ScraperApi implements INodeType {
 				try {
 					returnData.push(await executeOne(i));
 				} catch (error) {
-					if (error instanceof NodeOperationError || error instanceof NodeApiError) {
-						// eslint-disable-next-line @n8n/community-nodes/require-node-api-error
-						throw error;
+					if (error instanceof NodeOperationError) {
+						throw new NodeOperationError(this.getNode(), error, { itemIndex: i });
 					}
 					throw new NodeApiError(this.getNode(), error as JsonObject, { itemIndex: i });
 				}

@@ -1,5 +1,5 @@
 {
-	"node": "n8n-nodes-base.ScraperApi",
+	"node": "n8n-nodes-scraperapi-official.ScraperApi",
 	"nodeVersion": "1.0",
 	"codexVersion": "1.0",
 	"categories": [
