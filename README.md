@@ -556,6 +556,7 @@ Get real estate agent information from Redfin.
 - **1.2.3**: Preserve original error types (e.g. `NodeOperationError`) when `continueOnFail` is off.
 - **1.3.0**: AI Parser resource: create, get, list, parse, update, and delete AI-powered parsers. API resource: add the `zipCode` parameter for Amazon location-specific results (Amazon US only).
 - **1.4.0**: API resource: add the `instructionSet` parameter to run browser rendering instructions (click, input, scroll, wait) via the `x-sapi-instruction_set` header, e.g. to dismiss cookie-consent walls before capturing the page. Add the `customHeaders` parameter to forward your own request headers to the target site (enabling `keepHeaders` automatically), and fix the `keepHeaders` description (it forwards request headers to the target, not response headers). Add the `waitForSelector` parameter to wait for a CSS selector before returning the page.
+- **1.4.1**: Wrap thrown errors in `NodeApiError`/`NodeOperationError` so n8n can normalise messages instead of exposing raw stack traces. Correct the codex node identifier to `n8n-nodes-scraperapi-official.ScraperApi`. Provide light and dark themed icon variants for the node and credential.
 
 ## More ScraperAPI Integrations
 
